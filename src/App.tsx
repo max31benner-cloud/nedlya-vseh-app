@@ -1,35 +1,11 @@
-import { useEffect } from 'react';
-import { init, useRawInitData } from '@telegram-apps/sdk-react';
-
 function App() {
-  const rawInitData = useRawInitData();
-
-  useEffect(() => {
-    init(); // Инициализация Telegram Mini App
-  }, []);
-
-  let userName = 'Друг';
-
-  if (rawInitData) {
-    try {
-      const params = new URLSearchParams(rawInitData);
-      const userJson = params.get('user');
-      if (userJson) {
-        const user = JSON.parse(decodeURIComponent(userJson));
-        userName = user.first_name || 'Друг';
-      }
-    } catch (e) {
-      console.error('Ошибка парсинга initData:', e);
-    }
-  }
-
   return (
     <div
       style={{
         minHeight: '100vh',
         background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)',
         color: '#ffffff',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
+        fontFamily: 'system-ui, sans-serif',
         padding: '2rem 1.5rem',
         display: 'flex',
         flexDirection: 'column',
@@ -46,7 +22,7 @@ function App() {
           borderRadius: '20px',
           overflow: 'hidden',
           boxShadow: '0 15px 40px rgba(0,0,0,0.7)',
-          border: '1px solid rgba(115, 247, 88, 0.2)',
+          border: '1px solid rgba(255,105,180,0.2)',
         }}
       >
         <img
@@ -61,8 +37,8 @@ function App() {
           fontSize: '3.8rem',
           fontWeight: '900',
           margin: '0 0 1rem',
-          color: '#69adff',
-          textShadow: '0 4px 15px rgba(105, 118, 255, 0.4)',
+          color: '#69a8ff',
+          textShadow: '0 4px 15px rgba(85, 120, 247, 0.4)',
           letterSpacing: '-1px',
         }}
       >
@@ -76,7 +52,7 @@ function App() {
           opacity: 0.95,
         }}
       >
-        Привет, {userName}!
+        Привет!
       </p>
 
       <p
@@ -88,14 +64,14 @@ function App() {
           opacity: 0.85,
         }}
       >
-        Берешь на себя чужие ожидания, проблемы и желания?  
+        Брать на себя чужие ожидания, проблемы и желания норма?  
         Постоянно отдавать, чтобы понравиться, а в итоге пустота?  
         Пора перестать быть для всех и наконец стать для себя.
       </p>
 
       <button
         style={{
-          background: 'linear-gradient(135deg, rgb(134, 250, 121), #78eb55)',
+          background: 'linear-gradient(135deg, #69a8ff, #69a8ff)',
           color: '#fff',
           border: 'none',
           padding: '1.4rem 3.2rem',
@@ -103,7 +79,7 @@ function App() {
           fontWeight: 'bold',
           borderRadius: '999px',
           cursor: 'pointer',
-          boxShadow: '0 12px 35px rgba(126, 251, 91, 0.35)',
+          boxShadow: '0 12px 35px #69a8ff',
           transition: 'all 0.25s ease',
         }}
         onClick={() => alert('Тест начнётся в следующей версии! 🚀')}
