@@ -46,7 +46,7 @@ function App() {
           borderRadius: '20px',
           overflow: 'hidden',
           boxShadow: '0 15px 40px rgba(0,0,0,0.7)',
-          border: '1px solid rgba(255, 105, 180, 0.2)',
+          border: '1px solid rgba(115, 247, 88, 0.2)',
         }}
       >
         <img
@@ -61,8 +61,8 @@ function App() {
           fontSize: '3.8rem',
           fontWeight: '900',
           margin: '0 0 1rem',
-          color: '#ff69b4',
-          textShadow: '0 4px 15px rgba(255,105,180,0.4)',
+          color: '#69adff',
+          textShadow: '0 4px 15px rgba(105, 118, 255, 0.4)',
           letterSpacing: '-1px',
         }}
       >
@@ -95,7 +95,7 @@ function App() {
 
       <button
         style={{
-          background: 'linear-gradient(135deg, #ff69b4, #ff1493)',
+          background: 'linear-gradient(135deg, rgb(134, 250, 121), #78eb55)',
           color: '#fff',
           border: 'none',
           padding: '1.4rem 3.2rem',
@@ -103,7 +103,7 @@ function App() {
           fontWeight: 'bold',
           borderRadius: '999px',
           cursor: 'pointer',
-          boxShadow: '0 12px 35px rgba(255,105,180,0.35)',
+          boxShadow: '0 12px 35px rgba(126, 251, 91, 0.35)',
           transition: 'all 0.25s ease',
         }}
         onClick={() => alert('Тест начнётся в следующей версии! 🚀')}
