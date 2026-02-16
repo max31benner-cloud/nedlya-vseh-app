@@ -1,8 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { init, useRawInitData } from '@telegram-apps/sdk-react';
 
 function App() {
+  const rawInitData = useRawInitData();
   const [step, setStep] = useState(0); // 0 = welcome, 1–12 = вопросы, 13 = результат
   const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    init(); // Инициализация Telegram Mini App
+  }, []);
+
+  // Получаем имя пользователя из Telegram
+  let userName = 'Привет!';
+  if (rawInitData) {
+    try {
+      const params = new URLSearchParams(rawInitData);
+      const userJson = params.get('user');
+      if (userJson) {
+        const user = JSON.parse(decodeURIComponent(userJson));
+        userName = user.first_name ? `Привет, ${user.first_name}!` : 'Привет!';
+      }
+    } catch (e) {
+      console.error('Ошибка парсинга initData:', e);
+    }
+  }
 
   const questions = [
     { q: "Ты часто избегаешь конфликтов, чтобы никого не обидеть?", points: 2 },
@@ -20,13 +41,21 @@ function App() {
   ];
 
   const handleAnswer = (points: number) => {
-    setScore((prev) => prev + points);
-    setStep((prev) => prev + 1);
+    setScore(prev => prev + points);
+    setStep(prev => prev + 1);
   };
 
-  const restart = () => {
-    setStep(0);
-    setScore(0);
+  // Стили для кнопок (теперь используется!)
+  const btnStyle = {
+    background: '#333',
+    color: '#fff',
+    border: 'none',
+    padding: '1rem',
+    fontSize: '1.2rem',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    width: '100%',
+    marginBottom: '0.8rem',
   };
 
   // Welcome-экран
@@ -54,6 +83,7 @@ function App() {
             borderRadius: '20px',
             overflow: 'hidden',
             boxShadow: '0 15px 40px rgba(0,0,0,0.7)',
+            border: '1px solid rgba(105, 168, 255, 0.2)',
           }}
         >
           <img
@@ -63,15 +93,38 @@ function App() {
           />
         </div>
 
-        <h1 style={{ fontSize: '3.8rem', fontWeight: '900', color: '#69a8ff' }}>
+        <h1
+          style={{
+            fontSize: '3.8rem',
+            fontWeight: '900',
+            margin: '0 0 1rem',
+            color: '#69a8ff',
+            textShadow: '0 4px 15px rgba(105, 168, 255, 0.4)',
+            letterSpacing: '-1px',
+          }}
+        >
           НеДляВсех
         </h1>
 
-        <p style={{ fontSize: '1.8rem', margin: '0 0 1.5rem', opacity: 0.95 }}>
-          Привет!
+        <p
+          style={{
+            fontSize: '1.8rem',
+            margin: '0 0 1.5rem',
+            opacity: 0.95,
+          }}
+        >
+          {userName}
         </p>
 
-        <p style={{ fontSize: '1.25rem', maxWidth: '90%', lineHeight: 1.6, margin: '0 auto 3rem' }}>
+        <p
+          style={{
+            fontSize: '1.25rem',
+            maxWidth: '90%',
+            margin: '0 auto 3rem',
+            lineHeight: 1.6,
+            opacity: 0.85,
+          }}
+        >
           Берешь на себя чужие ожидания, проблемы и желания норма?  
           Постоянно отдавать, чтобы понравиться, а в итоге пустота?  
           Пора перестать быть для всех и наконец стать для себя.
@@ -140,7 +193,7 @@ function App() {
     );
   }
 
-  // Результат
+  // Результат теста
   let resultText = '';
   if (score <= 8) resultText = 'Низкий уровень — ты уже умеешь ставить границы и заботиться о себе!';
   else if (score <= 16) resultText = 'Средний уровень — есть над чем поработать, но ты на правильном пути.';
@@ -170,7 +223,7 @@ function App() {
       <button
         style={{
           marginTop: '2rem',
-          background: '#459cfe',
+          background: '#ff69b4',
           color: '#fff',
           border: 'none',
           padding: '1rem 2.5rem',
@@ -178,23 +231,15 @@ function App() {
           borderRadius: '999px',
           cursor: 'pointer',
         }}
-        onClick={restart}   // ← теперь используется
+        onClick={() => {
+          setStep(0);
+          setScore(0);
+        }}
       >
-        Пройти тест заново
+        Вернуться на главный экран
       </button>
     </div>
   );
 }
-
-const btnStyle = {
-  background: '#333',
-  color: '#fff',
-  border: 'none',
-  padding: '1rem',
-  fontSize: '1.2rem',
-  borderRadius: '12px',
-  cursor: 'pointer',
-  width: '100%',
-};
 
 export default App;
