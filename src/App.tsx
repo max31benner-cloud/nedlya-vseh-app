@@ -29,7 +29,7 @@ function App() {
     setScore(0);
   };
 
-  // Welcome-экран (твой текущий дизайн)
+  // Welcome-экран
   if (step === 0) {
     return (
       <div
@@ -45,7 +45,7 @@ function App() {
           textAlign: 'center',
         }}
       >
-        {/* Твоя обложка */}
+        {/* Обложка */}
         <div
           style={{
             width: '100%',
@@ -54,7 +54,6 @@ function App() {
             borderRadius: '20px',
             overflow: 'hidden',
             boxShadow: '0 15px 40px rgba(0,0,0,0.7)',
-            border: '1px solid rgba(105, 168, 255, 0.2)',
           }}
         >
           <img
@@ -64,38 +63,15 @@ function App() {
           />
         </div>
 
-        <h1
-          style={{
-            fontSize: '3.8rem',
-            fontWeight: '900',
-            margin: '0 0 1rem',
-            color: '#69a8ff',
-            textShadow: '0 4px 15px rgba(105, 168, 255, 0.4)',
-            letterSpacing: '-1px',
-          }}
-        >
+        <h1 style={{ fontSize: '3.8rem', fontWeight: '900', color: '#69a8ff' }}>
           НеДляВсех
         </h1>
 
-        <p
-          style={{
-            fontSize: '1.8rem',
-            margin: '0 0 1.5rem',
-            opacity: 0.95,
-          }}
-        >
+        <p style={{ fontSize: '1.8rem', margin: '0 0 1.5rem', opacity: 0.95 }}>
           Привет!
         </p>
 
-        <p
-          style={{
-            fontSize: '1.25rem',
-            maxWidth: '90%',
-            margin: '0 auto 3rem',
-            lineHeight: 1.6,
-            opacity: 0.85,
-          }}
-        >
+        <p style={{ fontSize: '1.25rem', maxWidth: '90%', lineHeight: 1.6, margin: '0 auto 3rem' }}>
           Берешь на себя чужие ожидания, проблемы и желания норма?  
           Постоянно отдавать, чтобы понравиться, а в итоге пустота?  
           Пора перестать быть для всех и наконец стать для себя.
@@ -194,7 +170,7 @@ function App() {
       <button
         style={{
           marginTop: '2rem',
-          background: '#69a8ff',
+          background: '#459cfe',
           color: '#fff',
           border: 'none',
           padding: '1rem 2.5rem',
@@ -202,7 +178,7 @@ function App() {
           borderRadius: '999px',
           cursor: 'pointer',
         }}
-        onClick={restart}
+        onClick={restart}   // ← теперь используется
       >
         Пройти тест заново
       </button>
