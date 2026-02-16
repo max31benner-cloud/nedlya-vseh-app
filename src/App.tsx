@@ -3,14 +3,34 @@ import { init, useRawInitData } from '@telegram-apps/sdk-react';
 
 function App() {
   const rawInitData = useRawInitData();
-  const [step, setStep] = useState(0); // 0 = welcome, 1–12 = вопросы, 13 = результат
+  const [step, setStep] = useState(0); // 0 = welcome, 1–12 = тест, 13 = результат, 14 = журнал, 15 = задания
   const [score, setScore] = useState(0);
+  const [journalEntries, setJournalEntries] = useState<string[]>([]);
+  const [newEntry, setNewEntry] = useState('');
+  const [completedDays, setCompletedDays] = useState<number[]>([]);
 
   useEffect(() => {
-    init(); // Инициализация Telegram Mini App
+    init();
+
+    // Загрузка журнала
+    const savedJournal = localStorage.getItem('journalEntries');
+    if (savedJournal) setJournalEntries(JSON.parse(savedJournal));
+
+    // Загрузка прогресса заданий
+    const savedProgress = localStorage.getItem('completedDays');
+    if (savedProgress) setCompletedDays(JSON.parse(savedProgress));
   }, []);
 
-  // Получаем имя пользователя из Telegram
+  // Сохранение журнала и заданий
+  useEffect(() => {
+    localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
+  }, [journalEntries]);
+
+  useEffect(() => {
+    localStorage.setItem('completedDays', JSON.stringify(completedDays));
+  }, [completedDays]);
+
+  // Имя пользователя
   let userName = 'Привет!';
   if (rawInitData) {
     try {
@@ -45,8 +65,26 @@ function App() {
     setStep(prev => prev + 1);
   };
 
-  // Стили для кнопок (теперь используется!)
-  const btnStyle = {
+  const dailyTasks = [
+    "День 1: Запиши 3 вещи, которые ты делаешь, чтобы всем угодить",
+    "День 2: Один раз скажи «нет» без объяснений",
+    "День 3: Выполни одно желание только для себя",
+    "День 4: Вырази своё настоящее мнение в разговоре",
+    "День 5: Не извиняйся, если не виноват",
+    "День 6: Попроси о помощи у кого-то",
+    "День 7: Проведи 30 минут без телефона и соцсетей",
+    "День 8: Запиши, что ты чувствуешь, когда кто-то не одобряет тебя",
+    "День 9: Сделай что-то, что раньше считал «эгоистичным»",
+    "День 10: Поблагодари себя за один поступок, который сделал для себя",
+  ];
+
+  const toggleDay = (day: number) => {
+    setCompletedDays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+    );
+  };
+
+  const btn = {
     background: '#333',
     color: '#fff',
     border: 'none',
@@ -58,185 +96,173 @@ function App() {
     marginBottom: '0.8rem',
   };
 
-  // Welcome-экран
+  // Welcome
   if (step === 0) {
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)',
-          color: '#ffffff',
-          fontFamily: 'system-ui, sans-serif',
-          padding: '2rem 1.5rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-        }}
-      >
-        {/* Обложка */}
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '360px',
-            marginBottom: '2.5rem',
-            borderRadius: '20px',
-            overflow: 'hidden',
-            boxShadow: '0 15px 40px rgba(0,0,0,0.7)',
-            border: '1px solid rgba(105, 168, 255, 0.2)',
-          }}
-        >
-          <img
-            src="https://i.ibb.co/0RR9w3Gq/image.jpg"
-            alt="НеДляВсех"
-            style={{ width: '100%', height: 'auto', display: 'block' }}
-          />
-        </div>
-
-        <h1
-          style={{
-            fontSize: '3.8rem',
-            fontWeight: '900',
-            margin: '0 0 1rem',
-            color: '#69a8ff',
-            textShadow: '0 4px 15px rgba(105, 168, 255, 0.4)',
-            letterSpacing: '-1px',
-          }}
-        >
-          НеДляВсех
-        </h1>
-
-        <p
-          style={{
-            fontSize: '1.8rem',
-            margin: '0 0 1.5rem',
-            opacity: 0.95,
-          }}
-        >
-          {userName}
-        </p>
-
-        <p
-          style={{
-            fontSize: '1.25rem',
-            maxWidth: '90%',
-            margin: '0 auto 3rem',
-            lineHeight: 1.6,
-            opacity: 0.85,
-          }}
-        >
+      <div style={{ minHeight: '100vh', background: '#0f0f0f', color: '#fff', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <img src="https://i.ibb.co/0RR9w3Gq/image.jpg" alt="Обложка" style={{ maxWidth: '360px', borderRadius: '20px', marginBottom: '2rem', boxShadow: '0 15px 40px rgba(0,0,0,0.7)' }} />
+        <h1 style={{ fontSize: '3.8rem', color: '#69a8ff' }}>НеДляВсех</h1>
+        <p style={{ fontSize: '1.8rem' }}>{userName}</p>
+        <p style={{ fontSize: '1.25rem', maxWidth: '90%' }}>
           Берешь на себя чужие ожидания, проблемы и желания норма?  
           Постоянно отдавать, чтобы понравиться, а в итоге пустота?  
-          Пора перестать быть для всех и наконец стать для себя.
+          Пора перестать быть для всех и стать для себя.
         </p>
-
-        <button
-          style={{
-            background: 'linear-gradient(135deg, #69a8ff, #459cfe)',
-            color: '#fff',
-            border: 'none',
-            padding: '1.4rem 3.2rem',
-            fontSize: '1.6rem',
-            fontWeight: 'bold',
-            borderRadius: '999px',
-            cursor: 'pointer',
-            boxShadow: '0 12px 35px #69a8ff',
-            transition: 'all 0.25s ease',
-          }}
-          onClick={() => setStep(1)}
-        >
+        <button style={{ ...btn, background: '#69a8ff' }} onClick={() => setStep(1)}>
           Начать тест
         </button>
-
-        <p style={{ marginTop: 'auto', fontSize: '0.95rem', opacity: 0.55, paddingTop: '3rem' }}>
-          Инструмент для тех, кто хочет вернуть себе свою жизнь
-        </p>
+        <button style={{ ...btn, background: '#444' }} onClick={() => setStep(14)}>
+          Журнал записей
+        </button>
+        <button style={{ ...btn, background: '#555' }} onClick={() => setStep(15)}>
+          Ежедневные задания
+        </button>
       </div>
     );
   }
 
-  // Вопросы теста
+  // Тест
   if (step <= questions.length) {
     const q = questions[step - 1];
     return (
-      <div
-        style={{
-          minHeight: '100vh',
-          background: '#111',
-          color: '#fff',
-          padding: '2rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-        }}
-      >
-        <h2 style={{ fontSize: '1.8rem', marginBottom: '2rem' }}>
-          Вопрос {step} из {questions.length}
-        </h2>
-        <p style={{ fontSize: '1.4rem', marginBottom: '2.5rem', maxWidth: '90%' }}>
-          {q.q}
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', maxWidth: '400px' }}>
-          <button style={btnStyle} onClick={() => handleAnswer(2)}>
-            Да, часто
-          </button>
-          <button style={btnStyle} onClick={() => handleAnswer(1)}>
-            Иногда
-          </button>
-          <button style={btnStyle} onClick={() => handleAnswer(0)}>
-            Нет, редко
-          </button>
+      <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <h2>Вопрос {step} из {questions.length}</h2>
+        <p style={{ fontSize: '1.4rem', margin: '2rem 0' }}>{q.q}</p>
+        <div style={{ width: '100%', maxWidth: '400px' }}>
+          <button style={btn} onClick={() => handleAnswer(2)}>Да, часто</button>
+          <button style={btn} onClick={() => handleAnswer(1)}>Иногда</button>
+          <button style={btn} onClick={() => handleAnswer(0)}>Нет, редко</button>
         </div>
       </div>
     );
   }
 
   // Результат теста
+  if (step === 13) {
+    let result = '';
+    if (score <= 8) result = 'Низкий уровень — ты уже умеешь ставить границы!';
+    else if (score <= 16) result = 'Средний уровень — есть над чем поработать.';
+    else result = 'Высокий уровень — пора менять подход.';
+
+    return (
+      <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <h1>Результат</h1>
+        <p style={{ fontSize: '2rem' }}>{score} баллов</p>
+        <p style={{ fontSize: '1.3rem' }}>{result}</p>
+        <button style={{ ...btn, background: '#ff69b4' }} onClick={() => setStep(0)}>Главный экран</button>
+        <button style={{ ...btn, background: '#444' }} onClick={() => setStep(14)}>Журнал</button>
+        <button style={{ ...btn, background: '#555' }} onClick={() => setStep(15)}>Задания</button>
+      </div>
+    );
+  }
+
+  // Журнал
+  if (step === 14) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem' }}>
+        <h1>Журнал записей</h1>
+        <textarea
+          value={newEntry}
+          onChange={e => setNewEntry(e.target.value)}
+          placeholder="Что ты чувствуешь? Что хочешь изменить?"
+          style={{ width: '100%', height: '120px', padding: '1rem', background: '#222', color: '#fff', border: '1px solid #444', borderRadius: '12px', marginBottom: '1rem' }}
+        />
+        <button
+          style={{ ...btn, background: '#ff69b4' }}
+          onClick={() => {
+            if (newEntry.trim()) {
+              const entry = `${new Date().toLocaleString('ru-RU')}: ${newEntry.trim()}`;
+              setJournalEntries(prev => [...prev, entry]);
+              setNewEntry('');
+            }
+          }}
+        >
+          Сохранить
+        </button>
+
+        <h2>Твои записи</h2>
+        {journalEntries.length === 0 ? <p>Пока пусто...</p> : journalEntries.map((entry, i) => (
+          <div key={i} style={{ background: '#222', padding: '1rem', borderRadius: '12px', marginBottom: '1rem' }}>
+            {entry}
+          </div>
+        ))}
+
+        {journalEntries.length > 0 && (
+          <button style={{ ...btn, background: '#444' }} onClick={() => setJournalEntries([])}>
+            Очистить журнал
+          </button>
+        )}
+
+        <button style={{ ...btn, background: '#555' }} onClick={() => setStep(0)}>
+          На главный экран
+        </button>
+      </div>
+    );
+  }
+
+  // Задания
+  if (step === 15) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem' }}>
+        <h1>Ежедневные задания</h1>
+        <p>Пройдено: {completedDays.length} / 10</p>
+
+        {Array.from({ length: 10 }, (_, i) => i + 1).map(day => (
+          <div
+            key={day}
+            style={{
+              background: completedDays.includes(day) ? '#2a2' : '#222',
+              padding: '1rem',
+              borderRadius: '12px',
+              marginBottom: '1rem',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <span>День {day}: {dailyTasks[day - 1]}</span>
+            <button
+              style={{
+                background: completedDays.includes(day) ? '#0f0' : '#444',
+                color: '#fff',
+                border: 'none',
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+              onClick={() => toggleDay(day)}
+            >
+              {completedDays.includes(day) ? '✓' : 'Выполнить'}
+            </button>
+          </div>
+        ))}
+
+        <button style={{ ...btn, background: '#555', marginTop: '2rem' }} onClick={() => setStep(0)}>
+          На главный экран
+        </button>
+      </div>
+    );
+  }
+
+  // Результат теста
   let resultText = '';
-  if (score <= 8) resultText = 'Низкий уровень — ты уже умеешь ставить границы и заботиться о себе!';
-  else if (score <= 16) resultText = 'Средний уровень — есть над чем поработать, но ты на правильном пути.';
-  else resultText = 'Высокий уровень — пора срочно менять подход. Ты слишком много отдаёшь другим!';
+  if (score <= 8) resultText = 'Низкий уровень — ты уже умеешь ставить границы!';
+  else if (score <= 16) resultText = 'Средний уровень — есть над чем поработать.';
+  else resultText = 'Высокий уровень — пора менять подход.';
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#111',
-        color: '#fff',
-        padding: '2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-      }}
-    >
-      <h1 style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>Твой результат</h1>
-      <p style={{ fontSize: '2rem', marginBottom: '1rem' }}>
-        {score} баллов из {questions.length * 2}
-      </p>
-      <p style={{ fontSize: '1.3rem', maxWidth: '90%', lineHeight: 1.5 }}>
-        {resultText}
-      </p>
-      <button
-        style={{
-          marginTop: '2rem',
-          background: '#459cfe',
-          color: '#fff',
-          border: 'none',
-          padding: '1rem 2.5rem',
-          fontSize: '1.3rem',
-          borderRadius: '999px',
-          cursor: 'pointer',
-        }}
-        onClick={() => {
-          setStep(0);
-          setScore(0);
-        }}
-      >
-        Вернуться на главный экран
+    <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <h1>Результат</h1>
+      <p style={{ fontSize: '2rem' }}>{score} баллов</p>
+      <p style={{ fontSize: '1.3rem' }}>{resultText}</p>
+      <button style={{ ...btn, background: '#ff69b4' }} onClick={() => setStep(0)}>
+        Главный экран
+      </button>
+      <button style={{ ...btn, background: '#444' }} onClick={() => setStep(14)}>
+        Журнал
+      </button>
+      <button style={{ ...btn, background: '#555' }} onClick={() => setStep(15)}>
+        Задания
       </button>
     </div>
   );
