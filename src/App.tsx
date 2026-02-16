@@ -12,16 +12,13 @@ function App() {
   useEffect(() => {
     init();
 
-    // Загрузка журнала
     const savedJournal = localStorage.getItem('journalEntries');
     if (savedJournal) setJournalEntries(JSON.parse(savedJournal));
 
-    // Загрузка прогресса заданий
     const savedProgress = localStorage.getItem('completedDays');
     if (savedProgress) setCompletedDays(JSON.parse(savedProgress));
   }, []);
 
-  // Сохранение
   useEffect(() => {
     localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
   }, [journalEntries]);
@@ -30,7 +27,6 @@ function App() {
     localStorage.setItem('completedDays', JSON.stringify(completedDays));
   }, [completedDays]);
 
-  // Имя пользователя
   let userName = 'Привет!';
   if (rawInitData) {
     try {
@@ -76,12 +72,6 @@ function App() {
   const handleAnswer = (points: number) => {
     setScore(prev => prev + points);
     setStep(prev => prev + 1);
-  };
-
-  const toggleDay = (day: number) => {
-    setCompletedDays(prev =>
-      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
-    );
   };
 
   const btn = {
@@ -208,7 +198,7 @@ function App() {
     );
   }
 
-  // Ежедневные задания
+  // Ежедневные задания (10 дней)
   if (step === 15) {
     return (
       <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem' }}>
@@ -238,7 +228,11 @@ function App() {
                 borderRadius: '8px',
                 cursor: 'pointer',
               }}
-              onClick={() => toggleDay(day)}
+              onClick={() => {
+                setCompletedDays(prev =>
+                  prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+                );
+              }}
             >
               {completedDays.includes(day) ? '✓' : 'Выполнить'}
             </button>
