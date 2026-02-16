@@ -21,7 +21,7 @@ function App() {
     if (savedProgress) setCompletedDays(JSON.parse(savedProgress));
   }, []);
 
-  // Сохранение журнала и заданий
+  // Сохранение
   useEffect(() => {
     localStorage.setItem('journalEntries', JSON.stringify(journalEntries));
   }, [journalEntries]);
@@ -60,11 +60,6 @@ function App() {
     { q: "Бывает, что ты злишься на себя за то, что опять всем уступил?", points: 1 },
   ];
 
-  const handleAnswer = (points: number) => {
-    setScore(prev => prev + points);
-    setStep(prev => prev + 1);
-  };
-
   const dailyTasks = [
     "День 1: Запиши 3 вещи, которые ты делаешь, чтобы всем угодить",
     "День 2: Один раз скажи «нет» без объяснений",
@@ -77,6 +72,11 @@ function App() {
     "День 9: Сделай что-то, что раньше считал «эгоистичным»",
     "День 10: Поблагодари себя за один поступок, который сделал для себя",
   ];
+
+  const handleAnswer = (points: number) => {
+    setScore(prev => prev + points);
+    setStep(prev => prev + 1);
+  };
 
   const toggleDay = (day: number) => {
     setCompletedDays(prev =>
@@ -149,24 +149,32 @@ function App() {
         <h1>Результат</h1>
         <p style={{ fontSize: '2rem' }}>{score} баллов</p>
         <p style={{ fontSize: '1.3rem' }}>{result}</p>
-        <button style={{ ...btn, background: '#ff69b4' }} onClick={() => setStep(0)}>Главный экран</button>
-        <button style={{ ...btn, background: '#444' }} onClick={() => setStep(14)}>Журнал</button>
-        <button style={{ ...btn, background: '#555' }} onClick={() => setStep(15)}>Задания</button>
+        <button style={{ ...btn, background: '#ff69b4' }} onClick={() => setStep(0)}>
+          Вернуться на главный экран
+        </button>
+        <button style={{ ...btn, background: '#444' }} onClick={() => setStep(14)}>
+          Журнал
+        </button>
+        <button style={{ ...btn, background: '#555' }} onClick={() => setStep(15)}>
+          Задания
+        </button>
       </div>
     );
   }
 
-  // Журнал
+  // Журнал записей
   if (step === 14) {
     return (
       <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem' }}>
         <h1>Журнал записей</h1>
+
         <textarea
           value={newEntry}
           onChange={e => setNewEntry(e.target.value)}
-          placeholder="Что ты чувствуешь? Что хочешь изменить?"
+          placeholder="Что ты чувствуешь сегодня? Что хочешь изменить?"
           style={{ width: '100%', height: '120px', padding: '1rem', background: '#222', color: '#fff', border: '1px solid #444', borderRadius: '12px', marginBottom: '1rem' }}
         />
+
         <button
           style={{ ...btn, background: '#ff69b4' }}
           onClick={() => {
@@ -177,7 +185,7 @@ function App() {
             }
           }}
         >
-          Сохранить
+          Сохранить запись
         </button>
 
         <h2>Твои записи</h2>
@@ -200,7 +208,7 @@ function App() {
     );
   }
 
-  // Задания
+  // Ежедневные задания
   if (step === 15) {
     return (
       <div style={{ minHeight: '100vh', background: '#111', color: '#fff', padding: '2rem' }}>
@@ -256,7 +264,7 @@ function App() {
       <p style={{ fontSize: '2rem' }}>{score} баллов</p>
       <p style={{ fontSize: '1.3rem' }}>{resultText}</p>
       <button style={{ ...btn, background: '#ff69b4' }} onClick={() => setStep(0)}>
-        Главный экран
+        Вернуться на главный экран
       </button>
       <button style={{ ...btn, background: '#444' }} onClick={() => setStep(14)}>
         Журнал
