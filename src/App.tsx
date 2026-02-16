@@ -223,7 +223,7 @@ function App() {
       <button
         style={{
           marginTop: '2rem',
-          background: '#ff69b4',
+          background: '#459cfe',
           color: '#fff',
           border: 'none',
           padding: '1rem 2.5rem',
