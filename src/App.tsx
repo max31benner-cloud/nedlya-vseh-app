@@ -6,15 +6,16 @@ interface JournalEntry {
   id: string;
   date: string;
   text: string;
-  dayTask?: number; // если запись привязана к дню плана
+  dayTask?: number;
 }
 
 interface UserState {
   testDone: boolean;
   testScore: number;
-  currentDay: number; // текущий активный день плана (1–90)
-  completedDays: number[]; // дни, которые полностью выполнены (с записью)
+  currentDay: number;
+  completedDays: number[];
   journalEntries: JournalEntry[];
+  lastCompletedDate: string | null; // "YYYY-MM-DD" — дата последнего НОВОГО выполненного задания
 }
 
 const DEFAULT_STATE: UserState = {
@@ -23,6 +24,7 @@ const DEFAULT_STATE: UserState = {
   currentDay: 1,
   completedDays: [],
   journalEntries: [],
+  lastCompletedDate: null,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -36,6 +38,10 @@ function loadState(userId: string): UserState {
 
 function saveState(userId: string, state: UserState) {
   localStorage.setItem(`userState_${userId}`, JSON.stringify(state));
+}
+
+function getTodayString(): string {
+  return new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -147,6 +153,20 @@ const dailyTasks = [
   'Подведи итоги 90 дней. Кем ты стал?',
 ];
 
+// ─── Мотивационные сообщения ──────────────────────────────────────────────────
+const motivationMessages = [
+  { emoji: '🔥', title: 'Ты сделал это!', text: 'Каждый маленький шаг — это победа. Ты на пути к себе настоящему.' },
+  { emoji: '💪', title: 'Отличная работа!', text: 'Большинство людей никогда не делают то, что сделал ты сегодня. Ты уже другой.' },
+  { emoji: '⭐', title: 'Так держать!', text: 'Границы — это не стены. Это уважение к себе. Ты учишься этому.' },
+  { emoji: '🌱', title: 'Ты растёшь!', text: 'Изменения незаметны изнутри, но они происходят. Доверяй процессу.' },
+  { emoji: '🦁', title: 'Смело!', text: 'Сказать «нет» или поставить себя на первое место — это сила, а не эгоизм.' },
+  { emoji: '✨', title: 'Ещё один день!', text: 'Ты не угождаешь — ты живёшь. Это твоя жизнь, и ты её выбираешь.' },
+  { emoji: '🏆', title: 'Победа!', text: 'Гловер писал: «Нет» — это полное предложение. Ты это понял на практике.' },
+  { emoji: '🎯', title: 'В точку!', text: 'Твоя ценность не зависит от того, насколько ты удобен другим. Помни это.' },
+  { emoji: '💎', title: 'Ты ценен!', text: 'Человек, который знает себе цену, не нуждается в постоянном одобрении.' },
+  { emoji: '🚀', title: 'Вперёд!', text: 'Каждый выполненный день — кирпичик твоего нового «я». Строй смело.' },
+];
+
 // ─── Styles ───────────────────────────────────────────────────────────────────
 const S = {
   page: {
@@ -194,7 +214,7 @@ const S = {
 };
 
 // ─── Screens ──────────────────────────────────────────────────────────────────
-type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'task-journal';
+type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'task-journal' | 'motivation';
 
 // ═════════════════════════════════════════════════════════════════════════════
 export default function App() {
@@ -208,11 +228,15 @@ export default function App() {
   const [testStep, setTestStep] = useState(0);
   const [testScore, setTestScore] = useState(0);
 
-  // task-journal: открыт для конкретного дня
+  // task-journal
   const [activeTaskDay, setActiveTaskDay] = useState<number | null>(null);
   const [taskDraft, setTaskDraft] = useState('');
 
-  // journal: новая запись
+  // motivation screen state
+  const [motivationMsg, setMotivationMsg] = useState(motivationMessages[0]);
+  const [completedDayNum, setCompletedDayNum] = useState<number>(1);
+
+  // journal
   const [journalDraft, setJournalDraft] = useState('');
 
   // ── Init ────────────────────────────────────────────────────────────────────
@@ -240,8 +264,6 @@ export default function App() {
     setUserName(uname);
     const saved = loadState(uid);
     setUserState(saved);
-    // Если тест уже пройден — сразу на главную (не на welcome)
-    // Если нет — на home, где покажем welcome с тестом
   }, [rawInitData]);
 
   // ── Persist ─────────────────────────────────────────────────────────────────
@@ -251,6 +273,12 @@ export default function App() {
       saveState(userId, next);
       return next;
     });
+  }
+
+  // ── Проверка: выполнял ли пользователь НОВОЕ задание сегодня ───────────────
+  function hasCompletedTaskToday(): boolean {
+    if (!userState.lastCompletedDate) return false;
+    return userState.lastCompletedDate === getTodayString();
   }
 
   // ── Test logic ──────────────────────────────────────────────────────────────
@@ -280,17 +308,19 @@ export default function App() {
 
   function saveTaskEntry() {
     if (!taskDraft.trim() || activeTaskDay === null) return;
+
     const entry: JournalEntry = {
       id: Date.now().toString(),
       date: new Date().toLocaleString('ru-RU'),
       text: taskDraft.trim(),
       dayTask: activeTaskDay,
     };
+
     const newEntries = [...userState.journalEntries, entry];
-    const newCompleted = userState.completedDays.includes(activeTaskDay)
+    const wasAlreadyDone = userState.completedDays.includes(activeTaskDay);
+    const newCompleted = wasAlreadyDone
       ? userState.completedDays
       : [...userState.completedDays, activeTaskDay];
-    // advance currentDay if needed
     const nextDay = activeTaskDay >= userState.currentDay
       ? Math.min(90, activeTaskDay + 1)
       : userState.currentDay;
@@ -299,9 +329,21 @@ export default function App() {
       journalEntries: newEntries,
       completedDays: newCompleted,
       currentDay: nextDay,
+      // Обновляем дату только если задание выполнено впервые
+      lastCompletedDate: wasAlreadyDone ? userState.lastCompletedDate : getTodayString(),
     });
+
     setTaskDraft('');
-    setScreen('plan');
+
+    // Мотивационный экран только при первом выполнении задания
+    if (!wasAlreadyDone) {
+      const randMsg = motivationMessages[Math.floor(Math.random() * motivationMessages.length)];
+      setMotivationMsg(randMsg);
+      setCompletedDayNum(activeTaskDay);
+      setScreen('motivation');
+    } else {
+      setScreen('plan');
+    }
   }
 
   // ── Free journal ────────────────────────────────────────────────────────────
@@ -322,9 +364,9 @@ export default function App() {
 
   // ── Result label ────────────────────────────────────────────────────────────
   function resultLabel(s: number) {
-    if (s <= 8) return { text: 'Низкий уровень — ты уже умеешь ставить границы!', color: '#4caf50' };
-    if (s <= 16) return { text: 'Средний уровень — есть над чем поработать.', color: '#ff9800' };
-    return { text: 'Высокий уровень — пора менять подход.', color: '#ff4444' };
+    if (s <= 8) return { text: 'Низкий уровень — круто, ты уже умеешь ставить границы! Задания помогут укрепить этот навык!', color: '#4caf50' };
+    if (s <= 16) return { text: 'Средний уровень — есть над чем поработать. Давай перейдем к практике!', color: '#ff9800' };
+    return { text: 'Высокий уровень — пора менять подход. Давай перейдем к практике!', color: '#ff4444' };
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -354,7 +396,8 @@ export default function App() {
           <p style={{ fontSize: '1.1rem', maxWidth: '90%', textAlign: 'center', color: '#aaa', marginBottom: '1rem' }}>
             Берёшь на себя чужие ожидания и проблемы?<br />
             Постоянно отдаёшь, чтобы понравиться?<br />
-            Пора стать для себя.
+            Пора стать для себя.<br />
+            Пройди тест честно, не обманый СЕБЯ!
           </p>
         )}
 
@@ -399,7 +442,6 @@ export default function App() {
     const progress = Math.round(((testStep) / questions.length) * 100);
     return (
       <div style={{ ...S.page, ...S.centered }}>
-        {/* Progress bar */}
         <div style={{ width: '100%', maxWidth: 400, marginBottom: '1.5rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#888', marginBottom: 6 }}>
             <span>Вопрос {testStep + 1} из {questions.length}</span>
@@ -453,21 +495,119 @@ export default function App() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
+  // MOTIVATION — новый экран после выполнения задания
+  // ════════════════════════════════════════════════════════════════════════════
+  if (screen === 'motivation') {
+    const totalDone = userState.completedDays.length;
+
+    return (
+      <div style={{ ...S.page, ...S.centered, textAlign: 'center' }}>
+        {/* Большой эмодзи */}
+        <div style={{
+          fontSize: '5rem',
+          marginBottom: '1rem',
+          filter: 'drop-shadow(0 0 20px rgba(105, 168, 255, 0.4))',
+        }}>
+          {motivationMsg.emoji}
+        </div>
+
+        {/* Карточка с поздравлением */}
+        <div style={{
+          background: 'linear-gradient(135deg, #1a2a40 0%, #1a3520 100%)',
+          border: '1px solid #69a8ff33',
+          borderRadius: '20px',
+          padding: '2rem 1.5rem',
+          maxWidth: 360,
+          width: '100%',
+          marginBottom: '1.5rem',
+        }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#69a8ff22',
+            border: '1px solid #69a8ff55',
+            borderRadius: '10px',
+            padding: '4px 12px',
+            fontSize: '0.8rem',
+            color: '#69a8ff',
+            fontWeight: 700,
+            marginBottom: '0.8rem',
+            letterSpacing: '0.05em',
+          }}>
+            ДЕНЬ {completedDayNum} ВЫПОЛНЕН ✓
+          </div>
+
+          <h2 style={{
+            fontSize: '2rem',
+            fontWeight: 800,
+            margin: '0 0 0.8rem',
+            color: '#fff',
+          }}>
+            {motivationMsg.title}
+          </h2>
+
+          <p style={{
+            fontSize: '1.1rem',
+            color: '#bbb',
+            lineHeight: 1.6,
+            margin: 0,
+          }}>
+            {motivationMsg.text}
+          </p>
+        </div>
+
+        {/* Прогресс */}
+        <div style={{
+          ...S.card('#1a1a2a'),
+          width: '100%',
+          maxWidth: 360,
+          marginBottom: '1.5rem',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span style={{ fontSize: '0.9rem', color: '#888' }}>Общий прогресс</span>
+            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#4caf50' }}>{totalDone} / 90</span>
+          </div>
+          <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
+            <div style={{
+              background: 'linear-gradient(90deg, #4caf50, #69a8ff)',
+              width: `${Math.round((totalDone / 90) * 100)}%`,
+              height: 8,
+              borderRadius: 8,
+              transition: 'width 0.5s ease',
+              minWidth: totalDone > 0 ? 8 : 0,
+            }} />
+          </div>
+          <p style={{ margin: '0.6rem 0 0', fontSize: '0.82rem', color: '#555', textAlign: 'center' }}>
+            🗓 Возвращайся завтра за следующим заданием
+          </p>
+        </div>
+
+        <div style={{ width: '100%', maxWidth: 360 }}>
+          <button style={S.btn('#2d5a9e')} onClick={() => setScreen('plan')}>
+            📅 К плану
+          </button>
+          <button style={S.btn('#333')} onClick={() => setScreen('home')}>
+            На главную
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
   // PLAN
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'plan') {
     const completed = userState.completedDays.length;
     const progressPct = Math.round((completed / 90) * 100);
+    const taskBlockedToday = hasCompletedTaskToday();
 
     return (
       <div style={S.page}>
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>90-дневный план</h1>
         </div>
 
-        {/* Progress summary */}
         <div style={{ ...S.card('#1a2a1a'), marginBottom: '1.2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <span style={{ fontWeight: 700 }}>Прогресс</span>
@@ -481,11 +621,31 @@ export default function App() {
           </p>
         </div>
 
+        {/* Баннер "уже выполнено сегодня" */}
+        {taskBlockedToday && (
+          <div style={{
+            ...S.card('#2a1e10'),
+            border: '1px solid #ff990044',
+            marginBottom: '1rem',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>🌙</div>
+            <p style={{ margin: 0, fontSize: '0.95rem', color: '#ffb347', fontWeight: 600 }}>
+              Задание на сегодня выполнено!
+            </p>
+            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#888' }}>
+              Возвращайся завтра за следующим заданием
+            </p>
+          </div>
+        )}
+
         {/* Task list */}
         {Array.from({ length: 90 }, (_, i) => i + 1).map(day => {
           const isDone = userState.completedDays.includes(day);
           const isCurrent = day === userState.currentDay;
           const isLocked = day > userState.currentDay;
+          // Новое задание заблокировано если уже выполнили сегодня
+          const isNewBlocked = taskBlockedToday && !isDone;
           const taskText = dailyTasks[day - 1];
 
           return (
@@ -509,20 +669,25 @@ export default function App() {
                 {!isLocked && (
                   <button
                     style={{
-                      background: isDone ? '#2e5c2e' : '#2d5a9e',
-                      color: '#fff',
+                      background: isDone ? '#2e5c2e' : isNewBlocked ? '#222' : '#2d5a9e',
+                      color: isNewBlocked && !isDone ? '#555' : '#fff',
                       border: 'none',
                       padding: '0.5rem 0.9rem',
                       borderRadius: '10px',
-                      cursor: 'pointer',
+                      cursor: isNewBlocked && !isDone ? 'not-allowed' : 'pointer',
                       fontSize: '0.85rem',
                       fontWeight: 600,
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
                     }}
-                    onClick={() => openTaskJournal(day)}
+                    disabled={isNewBlocked && !isDone}
+                    onClick={() => {
+                      if (isNewBlocked && !isDone) return;
+                      openTaskJournal(day);
+                    }}
+                    title={isNewBlocked && !isDone ? 'Возвращайся завтра' : undefined}
                   >
-                    {isDone ? '📝 Дописать' : '✍️ Выполнить'}
+                    {isDone ? '📝 Дописать' : isNewBlocked ? '🔒 Завтра' : '✍️ Выполнить'}
                   </button>
                 )}
               </div>
@@ -538,12 +703,11 @@ export default function App() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
-  // TASK JOURNAL (задание → запись → отметить выполненным)
+  // TASK JOURNAL
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'task-journal' && activeTaskDay !== null) {
     const taskText = dailyTasks[activeTaskDay - 1];
     const isDone = userState.completedDays.includes(activeTaskDay);
-    // Записи этого дня
     const dayEntries = userState.journalEntries.filter(e => e.dayTask === activeTaskDay);
     const canComplete = taskDraft.trim().length > 0;
 
@@ -554,13 +718,11 @@ export default function App() {
           <h2 style={{ margin: 0, fontSize: '1.2rem' }}>День {activeTaskDay}</h2>
         </div>
 
-        {/* Задание */}
         <div style={{ ...S.card('#1a2040'), marginBottom: '1.2rem', borderLeft: '3px solid #69a8ff' }}>
           <div style={S.tag('#69a8ff')}>Задание дня</div>
           <p style={{ margin: '6px 0 0', fontSize: '1.05rem', lineHeight: 1.5 }}>{taskText}</p>
         </div>
 
-        {/* Прошлые записи этого дня */}
         {dayEntries.length > 0 && (
           <div style={{ marginBottom: '1.2rem' }}>
             <p style={{ color: '#888', fontSize: '0.85rem', margin: '0 0 8px' }}>Твои записи по этому заданию:</p>
@@ -573,7 +735,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Поле записи */}
         <p style={{ color: '#aaa', fontSize: '0.95rem', margin: '0 0 8px' }}>
           {isDone ? 'Добавить ещё одну запись:' : 'Опиши, как это было. Что почувствовал? Что произошло?'}
         </p>
@@ -598,7 +759,6 @@ export default function App() {
           }}
         />
 
-        {/* Кнопки */}
         <button
           style={{
             ...S.btn(canComplete ? '#4caf50' : '#333'),
@@ -625,7 +785,7 @@ export default function App() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
-  // JOURNAL (свободные записи)
+  // JOURNAL
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'journal') {
     const freeEntries = userState.journalEntries.filter(e => !e.dayTask);
@@ -638,7 +798,6 @@ export default function App() {
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Журнал записей</h1>
         </div>
 
-        {/* Новая свободная запись */}
         <textarea
           value={journalDraft}
           onChange={e => setJournalDraft(e.target.value)}
@@ -666,7 +825,6 @@ export default function App() {
           💾 Сохранить запись
         </button>
 
-        {/* Свободные записи */}
         {freeEntries.length > 0 && (
           <>
             <h2 style={{ fontSize: '1.1rem', color: '#888', margin: '1.5rem 0 0.5rem' }}>Свободные записи</h2>
@@ -683,7 +841,6 @@ export default function App() {
           </>
         )}
 
-        {/* Записи по заданиям */}
         {taskEntries.length > 0 && (
           <>
             <h2 style={{ fontSize: '1.1rem', color: '#888', margin: '1.5rem 0 0.5rem' }}>Записи по заданиям</h2>
