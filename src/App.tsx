@@ -16,6 +16,8 @@ interface UserState {
   completedDays: number[];
   journalEntries: JournalEntry[];
   lastCompletedDate: string | null; // "YYYY-MM-DD" — дата последнего НОВОГО выполненного задания
+  currentStreak: number;            // текущая серия дней подряд
+  maxStreak: number;                // рекорд
 }
 
 const DEFAULT_STATE: UserState = {
@@ -25,6 +27,8 @@ const DEFAULT_STATE: UserState = {
   completedDays: [],
   journalEntries: [],
   lastCompletedDate: null,
+  currentStreak: 0,
+  maxStreak: 0,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -42,6 +46,22 @@ function saveState(userId: string, state: UserState) {
 
 function getTodayString(): string {
   return new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+}
+
+function getYesterdayString(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().split('T')[0];
+}
+
+// Считает новый стрик на основе lastCompletedDate и текущего стрика
+function calcNewStreak(lastDate: string | null, currentStreak: number): number {
+  if (!lastDate) return 1; // первое выполнение
+  const today = getTodayString();
+  const yesterday = getYesterdayString();
+  if (lastDate === today) return currentStreak;       // уже выполнено сегодня (не должно случаться, но на всякий)
+  if (lastDate === yesterday) return currentStreak + 1; // выполнял вчера — стрик продолжается
+  return 1; // пропустил — стрик сбрасывается
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -325,12 +345,19 @@ export default function App() {
       ? Math.min(90, activeTaskDay + 1)
       : userState.currentDay;
 
+    // Считаем стрик только при первом выполнении задания
+    const newStreak = wasAlreadyDone
+      ? userState.currentStreak
+      : calcNewStreak(userState.lastCompletedDate, userState.currentStreak);
+    const newMaxStreak = Math.max(userState.maxStreak, newStreak);
+
     updateState({
       journalEntries: newEntries,
       completedDays: newCompleted,
       currentDay: nextDay,
-      // Обновляем дату только если задание выполнено впервые
       lastCompletedDate: wasAlreadyDone ? userState.lastCompletedDate : getTodayString(),
+      currentStreak: newStreak,
+      maxStreak: newMaxStreak,
     });
 
     setTaskDraft('');
@@ -376,6 +403,14 @@ export default function App() {
     const greeting = userName ? `Привет, ${userName}!` : 'Привет!';
     const res = userState.testDone ? resultLabel(userState.testScore) : null;
 
+    // Проверяем, не сгорел ли стрик (пропустил вчера и сегодня ещё не выполнял)
+    const today = getTodayString();
+    const yesterday = getYesterdayString();
+    const streakAlive =
+      userState.currentStreak > 0 &&
+      (userState.lastCompletedDate === today || userState.lastCompletedDate === yesterday);
+    const displayStreak = streakAlive ? userState.currentStreak : 0;
+
     return (
       <div style={{ ...S.page, ...S.centered }}>
         <img
@@ -384,7 +419,70 @@ export default function App() {
           style={{ maxWidth: '280px', borderRadius: '20px', marginBottom: '1.5rem', boxShadow: '0 15px 40px rgba(0,0,0,0.7)' }}
         />
         <h1 style={{ fontSize: '2.8rem', color: '#69a8ff', margin: '0 0 0.3rem' }}>НеДляВсех</h1>
-        <p style={{ fontSize: '1.4rem', margin: '0 0 0.5rem' }}>{greeting}</p>
+        <p style={{ fontSize: '1.4rem', margin: '0 0 0.8rem' }}>{greeting}</p>
+
+        {/* Стрик */}
+        {userState.completedDays.length > 0 && (
+          <div style={{
+            display: 'flex',
+            gap: '0.8rem',
+            marginBottom: '1.2rem',
+            width: '100%',
+            maxWidth: 400,
+          }}>
+            {/* Текущий стрик */}
+            <div style={{
+              flex: 1,
+              background: displayStreak > 0 ? 'linear-gradient(135deg, #2a1a0a, #3a2010)' : '#1a1a1a',
+              border: `1px solid ${displayStreak > 0 ? '#ff660044' : '#222'}`,
+              borderRadius: '14px',
+              padding: '0.9rem',
+              textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '2px' }}>
+                {displayStreak > 0 ? '🔥' : '💤'}
+              </div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: displayStreak > 0 ? '#ff8c42' : '#444', lineHeight: 1 }}>
+                {displayStreak}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#666', marginTop: 2 }}>
+                {displayStreak === 1 ? 'день подряд' : displayStreak >= 2 && displayStreak <= 4 ? 'дня подряд' : 'дней подряд'}
+              </div>
+            </div>
+
+            {/* Рекорд */}
+            <div style={{
+              flex: 1,
+              background: '#1a1a2a',
+              border: '1px solid #2a2a4a',
+              borderRadius: '14px',
+              padding: '0.9rem',
+              textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '2px' }}>🏆</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#69a8ff', lineHeight: 1 }}>
+                {userState.maxStreak}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#666', marginTop: 2 }}>рекорд</div>
+            </div>
+
+            {/* Выполнено всего */}
+            <div style={{
+              flex: 1,
+              background: '#1a2a1a',
+              border: '1px solid #2a4a2a',
+              borderRadius: '14px',
+              padding: '0.9rem',
+              textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '2rem', marginBottom: '2px' }}>✅</div>
+              <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#4caf50', lineHeight: 1 }}>
+                {userState.completedDays.length}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#666', marginTop: 2 }}>из 90 дней</div>
+            </div>
+          </div>
+        )}
 
         {userState.testDone && res ? (
           <div style={{ ...S.card('#1c2a1c'), width: '100%', maxWidth: 400, marginBottom: '1.2rem', textAlign: 'center' }}>
@@ -499,6 +597,7 @@ export default function App() {
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'motivation') {
     const totalDone = userState.completedDays.length;
+    const streak = userState.currentStreak;
 
     return (
       <div style={{ ...S.page, ...S.centered, textAlign: 'center' }}>
@@ -519,7 +618,7 @@ export default function App() {
           padding: '2rem 1.5rem',
           maxWidth: 360,
           width: '100%',
-          marginBottom: '1.5rem',
+          marginBottom: '1.2rem',
         }}>
           <div style={{
             display: 'inline-block',
@@ -555,30 +654,54 @@ export default function App() {
           </p>
         </div>
 
-        {/* Прогресс */}
+        {/* Стрик + прогресс */}
         <div style={{
-          ...S.card('#1a1a2a'),
+          display: 'flex',
+          gap: '0.8rem',
           width: '100%',
           maxWidth: 360,
           marginBottom: '1.5rem',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-            <span style={{ fontSize: '0.9rem', color: '#888' }}>Общий прогресс</span>
-            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#4caf50' }}>{totalDone} / 90</span>
+          {/* Стрик */}
+          <div style={{
+            flex: 1,
+            background: streak > 1 ? 'linear-gradient(135deg, #2a1a0a, #3a2010)' : '#1a1a1a',
+            border: `1px solid ${streak > 1 ? '#ff660044' : '#222'}`,
+            borderRadius: '14px',
+            padding: '1rem 0.5rem',
+            textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '1.8rem' }}>🔥</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ff8c42', lineHeight: 1.1 }}>{streak}</div>
+            <div style={{ fontSize: '0.7rem', color: '#666', marginTop: 2 }}>
+              {streak === 1 ? 'день подряд' : streak >= 2 && streak <= 4 ? 'дня подряд' : 'дней подряд'}
+            </div>
           </div>
-          <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
-            <div style={{
-              background: 'linear-gradient(90deg, #4caf50, #69a8ff)',
-              width: `${Math.round((totalDone / 90) * 100)}%`,
-              height: 8,
-              borderRadius: 8,
-              transition: 'width 0.5s ease',
-              minWidth: totalDone > 0 ? 8 : 0,
-            }} />
+
+          {/* Прогресс */}
+          <div style={{
+            flex: 2,
+            ...S.card('#1a1a2a'),
+            marginBottom: 0,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: '0.85rem', color: '#888' }}>Прогресс</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4caf50' }}>{totalDone} / 90</span>
+            </div>
+            <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
+              <div style={{
+                background: 'linear-gradient(90deg, #4caf50, #69a8ff)',
+                width: `${Math.round((totalDone / 90) * 100)}%`,
+                height: 8,
+                borderRadius: 8,
+                transition: 'width 0.5s ease',
+                minWidth: totalDone > 0 ? 8 : 0,
+              }} />
+            </div>
+            <p style={{ margin: '0.5rem 0 0', fontSize: '0.78rem', color: '#555', textAlign: 'center' }}>
+              🗓 Возвращайся завтра!
+            </p>
           </div>
-          <p style={{ margin: '0.6rem 0 0', fontSize: '0.82rem', color: '#555', textAlign: 'center' }}>
-            🗓 Возвращайся завтра за следующим заданием
-          </p>
         </div>
 
         <div style={{ width: '100%', maxWidth: 360 }}>
