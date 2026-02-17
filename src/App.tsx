@@ -35,7 +35,24 @@ const DEFAULT_STATE: UserState = {
 function loadState(userId: string): UserState {
   try {
     const raw = localStorage.getItem(`userState_${userId}`);
-    if (raw) return { ...DEFAULT_STATE, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      const merged: UserState = { ...DEFAULT_STATE, ...parsed };
+
+      // Миграция: если есть выполненные дни но стрик 0 — восстанавливаем
+      if (merged.completedDays.length > 0 && merged.currentStreak === 0 && merged.lastCompletedDate) {
+        const today = new Date().toISOString().split('T')[0];
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        const yesterday = d.toISOString().split('T')[0];
+        if (merged.lastCompletedDate === today || merged.lastCompletedDate === yesterday) {
+          merged.currentStreak = 1;
+          merged.maxStreak = Math.max(merged.maxStreak, 1);
+        }
+      }
+
+      return merged;
+    }
   } catch {}
   return { ...DEFAULT_STATE };
 }
@@ -357,6 +374,7 @@ export default function App() {
 
   // journal
   const [journalDraft, setJournalDraft] = useState('');
+  const [resetConfirm, setResetConfirm] = useState(false);
 
   // ── Init ────────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -488,6 +506,13 @@ export default function App() {
     updateState({ journalEntries: userState.journalEntries.filter(e => e.id !== id) });
   }
 
+  function resetAll() {
+    const fresh = { ...DEFAULT_STATE };
+    saveState(userId, fresh);
+    setUserState(fresh);
+    setScreen('home');
+  }
+
   // ── Result label ────────────────────────────────────────────────────────────
   function resultLabel(s: number) {
     if (s <= 8) return { text: 'Низкий уровень — круто, ты уже умеешь ставить границы! Задания помогут укрепить этот навык!', color: '#4caf50' };
@@ -590,14 +615,14 @@ export default function App() {
             <p style={{ fontSize: '1.8rem', fontWeight: 700, margin: '0.3rem 0' }}>{userState.testScore} баллов</p>
             <p style={{ fontSize: '1rem', color: '#ccc', margin: 0 }}>{res.text}</p>
           </div>
-        ) : (
+        ) : userState.completedDays.length === 0 ? (
           <p style={{ fontSize: '1.1rem', maxWidth: '90%', textAlign: 'center', color: '#aaa', marginBottom: '1rem' }}>
             Берёшь на себя чужие ожидания и проблемы?<br />
             Постоянно отдаёшь, чтобы понравиться?<br />
             Пора стать для себя.<br />
             Пройди тест честно, не обманый СЕБЯ!
           </p>
-        )}
+        ) : null}
 
         {/* Цитата дня */}
         <div style={{
@@ -929,7 +954,7 @@ export default function App() {
         {Array.from({ length: 90 }, (_, i) => i + 1).map(day => {
           const isDone = userState.completedDays.includes(day);
           const isCurrent = day === userState.currentDay;
-          const isLocked = day > userState.currentDay;
+          const isLocked = false; // временно все дни открыты
           // Новое задание заблокировано если уже выполнили сегодня
           const isNewBlocked = taskBlockedToday && !isDone;
           const taskText = dailyTasks[day - 1];
@@ -1153,6 +1178,38 @@ export default function App() {
         <button style={{ ...S.btn('#222'), marginTop: '1rem' }} onClick={() => setScreen('home')}>
           На главную
         </button>
+
+        {/* Зона сброса */}
+        <div style={{ marginTop: '2rem', borderTop: '1px solid #1e1e1e', paddingTop: '1.5rem' }}>
+          {!resetConfirm ? (
+            <button
+              style={{ ...S.btn('#1a1a1a'), color: '#555', border: '1px solid #2a2a2a' }}
+              onClick={() => setResetConfirm(true)}
+            >
+              🗑 Сбросить весь прогресс
+            </button>
+          ) : (
+            <div style={{ ...S.card('#2a1010'), border: '1px solid #ff444433', textAlign: 'center' }}>
+              <p style={{ margin: '0 0 1rem', fontSize: '0.95rem', color: '#ff8888' }}>
+                ⚠️ Это удалит весь прогресс, записи и результат теста. Действие необратимо.
+              </p>
+              <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <button
+                  style={{ ...S.btn('#ff3333'), marginBottom: 0, flex: 1 }}
+                  onClick={resetAll}
+                >
+                  Да, сбросить
+                </button>
+                <button
+                  style={{ ...S.btn('#333'), marginBottom: 0, flex: 1 }}
+                  onClick={() => setResetConfirm(false)}
+                >
+                  Отмена
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
