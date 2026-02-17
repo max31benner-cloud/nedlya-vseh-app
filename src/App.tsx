@@ -466,11 +466,6 @@ export default function App() {
     });
   }
 
-  function hasCompletedTaskToday(): boolean {
-    if (!userState.lastCompletedDate) return false;
-    return userState.lastCompletedDate === getTodayString();
-  }
-
   // ── Test ────────────────────────────────────────────────────────────────────
   function handleTestAnswer(points: number) {
     const ns = testScore + points;
@@ -826,7 +821,6 @@ export default function App() {
   if (screen === 'plan') {
     const completed = userState.completedDays.length;
     const progressPct = Math.round((completed / 90) * 100);
-    const blockedToday = false; // ограничение по дням снято
 
     return (
       <div style={S.page}>
@@ -845,14 +839,6 @@ export default function App() {
           </div>
           <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: '#888' }}>Текущий день: {userState.currentDay}</p>
         </div>
-
-        {blockedToday && (
-          <div style={{ ...S.card('#2a1e10'), border: '1px solid #ff990044', marginBottom: '1rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.5rem', marginBottom: 4 }}>🌙</div>
-            <p style={{ margin: 0, fontSize: '0.95rem', color: '#ffb347', fontWeight: 600 }}>День выполнен — возвращайся завтра!</p>
-            <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#888' }}>Ты можешь дополнить записи в уже выполненных днях</p>
-          </div>
-        )}
 
         {Array.from({ length: 90 }, (_, i) => i + 1).map(day => {
           const isDone = userState.completedDays.includes(day);
@@ -898,7 +884,6 @@ export default function App() {
   if (screen === 'day-detail') {
     const dayData = dailyPlan[activeDay - 1];
     const isDayDone = userState.completedDays.includes(activeDay);
-    const blockedToday = false; // ограничение по дням снято
     const taskLabels = ['🔵 Практика', '👁 Наблюдение', '✍️ Рефлексия'];
 
     return (
@@ -918,7 +903,7 @@ export default function App() {
         {dayData.tasks.map((task, i) => {
           const done = isTaskDone(userState.journalEntries, activeDay, i);
           const entries = userState.journalEntries.filter(e => e.day === activeDay && e.taskIdx === i);
-          const isNewBlocked = blockedToday && !isDayDone && !done;
+          const isNewBlocked = false; // ограничения сняты
 
           return (
             <div key={i} style={{ ...S.card(done ? '#1a2e1a' : '#1e1e2a'), border: `1px solid ${done ? '#2a4a2a' : '#2a2a3a'}`, marginBottom: '0.8rem' }}>
