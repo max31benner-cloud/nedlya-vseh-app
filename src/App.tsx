@@ -311,6 +311,10 @@ const S = {
     color: '#fff',
     padding: '1.5rem',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    boxSizing: 'border-box' as const,
+    width: '100%',
+    overflowX: 'hidden' as const,
+    wordBreak: 'break-word' as const,
   } as React.CSSProperties,
   centered: {
     display: 'flex',
@@ -336,6 +340,10 @@ const S = {
     padding: '1rem 1.2rem',
     borderRadius: '14px',
     marginBottom: '0.8rem',
+    boxSizing: 'border-box' as const,
+    width: '100%',
+    wordBreak: 'break-word' as const,
+    overflowWrap: 'break-word' as const,
   } as React.CSSProperties),
   tag: (color: string) => ({
     display: 'inline-block',
@@ -1215,4 +1223,17 @@ export default function App() {
   }
 
   return null;
+}
+
+// Глобальный стиль — предотвращает горизонтальный скролл во всём приложении
+const globalStyle = document.createElement('style');
+globalStyle.textContent = `
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100vw; }
+  img { max-width: 100%; }
+  textarea { max-width: 100%; }
+`;
+if (!document.head.querySelector('[data-app-style]')) {
+  globalStyle.setAttribute('data-app-style', '1');
+  document.head.appendChild(globalStyle);
 }
