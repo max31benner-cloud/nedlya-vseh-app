@@ -39,6 +39,18 @@ function loadState(userId: string): UserState {
     if (raw) {
       const parsed = JSON.parse(raw);
       const merged: UserState = { ...DEFAULT_STATE, ...parsed };
+
+      // Миграция старого формата записей: dayTask → day, taskIdx = 0
+      if (merged.journalEntries) {
+        merged.journalEntries = merged.journalEntries.map((e: any) => {
+          if (e.dayTask !== undefined && e.day === undefined) {
+            return { ...e, day: e.dayTask, taskIdx: 0 };
+          }
+          return e;
+        });
+      }
+
+      // Миграция стрика
       if (merged.completedDays.length > 0 && merged.currentStreak === 0 && merged.lastCompletedDate) {
         const today = getTodayString();
         const yesterday = getYesterdayString();
@@ -47,6 +59,7 @@ function loadState(userId: string): UserState {
           merged.maxStreak = Math.max(merged.maxStreak, 1);
         }
       }
+
       return merged;
     }
   } catch {}
@@ -724,6 +737,7 @@ export default function App() {
           const isCurrent = day === userState.currentDay;
           const progress = dayProgress(userState.journalEntries, day);
           const dayData = dailyPlan[day - 1];
+          if (!dayData) return null; // защита от краша
 
           return (
             <div key={day} style={{ ...S.card(isDone ? '#1a2e1a' : isCurrent ? '#1a2040' : '#1a1a1a'), border: isCurrent ? '1px solid #69a8ff44' : '1px solid transparent', cursor: 'pointer' }}
@@ -742,8 +756,6 @@ export default function App() {
                 </div>
                 <div style={{ color: '#444', fontSize: '1.2rem', flexShrink: 0 }}>›</div>
               </div>
-
-              {/* Мини прогресс 3 точки */}
               <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
                 {[0, 1, 2].map(i => (
                   <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: isTaskDone(userState.journalEntries, day, i) ? '#4caf50' : '#2a2a2a' }} />
