@@ -1,16 +1,5 @@
 import { useEffect, useState } from 'react';
-
-// Безопасная обёртка — не падает вне Telegram
-function useSafeRawInitData(): string | undefined {
-  const [data, setData] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    try {
-      const tg = (window as any).Telegram?.WebApp;
-      if (tg?.initData) setData(tg.initData);
-    } catch (e) { /* не в Telegram */ }
-  }, []);
-  return data;
-}
+import { init, useRawInitData } from '@telegram-apps/sdk-react';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface JournalEntry {
@@ -426,7 +415,7 @@ type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | '
 
 // ═════════════════════════════════════════════════════════════════════════════
 export default function App() {
-  const rawInitData = useSafeRawInitData();
+  const rawInitData = useRawInitData();
   const [screen, setScreen] = useState<Screen>('home');
   const [userId, setUserId] = useState('guest');
   const [userName, setUserName] = useState('');
@@ -450,6 +439,7 @@ export default function App() {
   const [lessonOpen, setLessonOpen] = useState(false);
 
   // ── Init ────────────────────────────────────────────────────────────────────
+  useEffect(() => { try { init(); } catch {} }, []);
 
   useEffect(() => {
     let uid = 'guest'; let uname = '';
