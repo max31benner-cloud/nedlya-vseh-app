@@ -412,7 +412,7 @@ function getNewAchievements(prev: UserState, next: UserState): Achievement[] {
 }
 
 // ─── Screen types ─────────────────────────────────────────────────────────────
-type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | 'task-journal' | 'motivation' | 'achievements';
+type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | 'task-journal' | 'motivation' | 'achievements' | 'stats';
 
 // ═════════════════════════════════════════════════════════════════════════════
 export default function App() {
@@ -664,6 +664,9 @@ export default function App() {
               ({getUnlockedAchievements(userState).length}/{ACHIEVEMENTS.length})
             </span>
           </button>
+          <button style={S.btn('#1a2a2a')} onClick={() => setScreen('stats')}>
+            📊 Статистика
+          </button>
         </div>
       </div>
     );
@@ -823,7 +826,7 @@ export default function App() {
   if (screen === 'plan') {
     const completed = userState.completedDays.length;
     const progressPct = Math.round((completed / 90) * 100);
-    const blockedToday = hasCompletedTaskToday();
+    const blockedToday = false; // ограничение по дням снято
 
     return (
       <div style={S.page}>
@@ -895,7 +898,7 @@ export default function App() {
   if (screen === 'day-detail') {
     const dayData = dailyPlan[activeDay - 1];
     const isDayDone = userState.completedDays.includes(activeDay);
-    const blockedToday = hasCompletedTaskToday();
+    const blockedToday = false; // ограничение по дням снято
     const taskLabels = ['🔵 Практика', '👁 Наблюдение', '✍️ Рефлексия'];
 
     return (
@@ -1095,6 +1098,153 @@ export default function App() {
             </div>
           )}
         </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // STATS
+  // ════════════════════════════════════════════════════════════════════════════
+  if (screen === 'stats') {
+    const totalDays = userState.completedDays.length;
+    const totalEntries = userState.journalEntries.length;
+    const taskEntries = userState.journalEntries.filter(e => e.day !== undefined);
+    const freeEntries = userState.journalEntries.filter(e => e.day === undefined);
+    const totalWords = userState.journalEntries.reduce((acc, e) => acc + e.text.split(/\s+/).filter(Boolean).length, 0);
+    const unlocked = getUnlockedAchievements(userState).length;
+
+    // Активность по неделям (последние 12 недель)
+    const weeklyData: { week: string; count: number }[] = [];
+    for (let w = 11; w >= 0; w--) {
+      const weekStart = new Date();
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay() - w * 7);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 6);
+      const label = `${weekStart.getDate()}.${String(weekStart.getMonth() + 1).padStart(2, '0')}`;
+      // Считаем записи за эту неделю
+      const count = userState.journalEntries.filter(e => {
+        const parts = e.date.split(', ');
+        if (!parts[0]) return false;
+        const [d, m, y] = parts[0].split('.');
+        if (!d || !m || !y) return false;
+        const entryDate = new Date(+('20' + y.slice(-2)), +m - 1, +d);
+        return entryDate >= weekStart && entryDate <= weekEnd;
+      }).length;
+      weeklyData.push({ week: label, count });
+    }
+    const maxWeekCount = Math.max(...weeklyData.map(w => w.count), 1);
+
+    // Распределение по типам заданий
+    const practiceCount = taskEntries.filter(e => e.taskIdx === 0).length;
+    const observeCount  = taskEntries.filter(e => e.taskIdx === 1).length;
+    const reflectCount  = taskEntries.filter(e => e.taskIdx === 2).length;
+
+    // Средняя длина записи
+    const avgWords = totalEntries > 0 ? Math.round(totalWords / totalEntries) : 0;
+
+    // Самый продуктивный день недели
+    const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const byDayOfWeek = [0, 0, 0, 0, 0, 0, 0];
+    userState.journalEntries.forEach(e => {
+      const parts = e.date.split(', ');
+      if (!parts[0]) return;
+      const [d, m, y] = parts[0].split('.');
+      if (!d || !m || !y) return;
+      const date = new Date(+('20' + y.slice(-2)), +m - 1, +d);
+      byDayOfWeek[date.getDay()]++;
+    });
+    const maxDayIdx = byDayOfWeek.indexOf(Math.max(...byDayOfWeek));
+    const bestDay = byDayOfWeek[maxDayIdx] > 0 ? dayNames[maxDayIdx] : '—';
+
+    return (
+      <div style={S.page}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Статистика</h1>
+        </div>
+
+        {/* Ключевые цифры — 2×2 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem', marginBottom: '1rem' }}>
+          {[
+            { emoji: '✅', value: totalDays, label: 'дней выполнено', color: '#4caf50' },
+            { emoji: '📝', value: totalEntries, label: 'записей всего', color: '#69a8ff' },
+            { emoji: '🔥', value: userState.maxStreak, label: 'рекорд стрика', color: '#ff8c42' },
+            { emoji: '🏅', value: unlocked, label: `ачивок из ${ACHIEVEMENTS.length}`, color: '#a855f7' },
+          ].map(({ emoji, value, label, color }) => (
+            <div key={label} style={{ background: '#1a1a1a', borderRadius: '14px', padding: '1rem', textAlign: 'center', border: `1px solid ${color}22` }}>
+              <div style={{ fontSize: '1.6rem', marginBottom: 4 }}>{emoji}</div>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</div>
+              <div style={{ fontSize: '0.72rem', color: '#666', marginTop: 4 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Доп. метрики */}
+        <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+          <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: '#888', letterSpacing: '0.05em' }}>ДЕТАЛИ</p>
+          {[
+            { label: '📖 Слов написано', value: totalWords.toLocaleString('ru-RU') },
+            { label: '✍️ Средняя длина записи', value: `${avgWords} слов` },
+            { label: '🗓 Лучший день недели', value: bestDay },
+            { label: '📓 Свободных записей', value: freeEntries.length },
+            { label: '🎯 Записей по заданиям', value: taskEntries.length },
+            { label: '📈 Прогресс плана', value: `${Math.round((totalDays / 90) * 100)}%` },
+          ].map(({ label, value }) => (
+            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #222' }}>
+              <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{label}</span>
+              <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>{value}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Распределение по типам */}
+        {taskEntries.length > 0 && (
+          <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+            <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: '#888', letterSpacing: '0.05em' }}>ТИП ЗАПИСЕЙ</p>
+            {[
+              { label: '🔵 Практика', count: practiceCount, color: '#2d5a9e' },
+              { label: '👁 Наблюдение', count: observeCount, color: '#5a3a8a' },
+              { label: '✍️ Рефлексия', count: reflectCount, color: '#3a5a3a' },
+            ].map(({ label, count, color }) => {
+              const pct = taskEntries.length > 0 ? Math.round((count / taskEntries.length) * 100) : 0;
+              return (
+                <div key={label} style={{ marginBottom: '0.7rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <span style={{ fontSize: '0.85rem', color: '#aaa' }}>{label}</span>
+                    <span style={{ fontSize: '0.85rem', color: '#666' }}>{count} · {pct}%</span>
+                  </div>
+                  <div style={{ background: '#222', borderRadius: 4, height: 6 }}>
+                    <div style={{ background: color, width: `${pct}%`, height: 6, borderRadius: 4, minWidth: count > 0 ? 6 : 0 }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* График активности по неделям */}
+        {totalEntries > 0 && (
+          <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+            <p style={{ margin: '0 0 1rem', fontWeight: 700, fontSize: '0.9rem', color: '#888', letterSpacing: '0.05em' }}>АКТИВНОСТЬ ПО НЕДЕЛЯМ</p>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '80px' }}>
+              {weeklyData.map(({ week, count }) => (
+                <div key={week} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                  <div style={{ width: '100%', background: count > 0 ? '#69a8ff' : '#222', borderRadius: '3px 3px 0 0', height: `${Math.round((count / maxWeekCount) * 64) + (count > 0 ? 4 : 0)}px`, minHeight: count > 0 ? 8 : 4, transition: 'height 0.3s' }} />
+                  <span style={{ fontSize: '0.55rem', color: '#444', whiteSpace: 'nowrap' }}>{week}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {totalEntries === 0 && (
+          <div style={{ textAlign: 'center', padding: '2rem 0', color: '#444' }}>
+            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📊</div>
+            <p style={{ margin: 0 }}>Пока данных нет — начни выполнять задания!</p>
+          </div>
+        )}
+
+        <button style={{ ...S.btn('#333'), marginTop: '0.5rem' }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
