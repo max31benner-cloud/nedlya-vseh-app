@@ -375,8 +375,44 @@ const S = {
   } as React.CSSProperties),
 };
 
+// ─── Ачивки ───────────────────────────────────────────────────────────────────
+interface Achievement {
+  id: string;
+  emoji: string;
+  title: string;
+  desc: string;
+  check: (s: UserState) => boolean;
+}
+
+const ACHIEVEMENTS: Achievement[] = [
+  { id: 'first_step',   emoji: '👣', title: 'Первый шаг',       desc: 'Выполнить первый день',                  check: s => s.completedDays.length >= 1 },
+  { id: 'streak_3',     emoji: '🔥', title: 'Три дня подряд',   desc: 'Не пропустить 3 дня подряд',             check: s => s.maxStreak >= 3 },
+  { id: 'week_done',    emoji: '📅', title: 'Неделя',           desc: 'Выполнить 7 дней плана',                 check: s => s.completedDays.length >= 7 },
+  { id: 'streak_7',     emoji: '⚡', title: 'Огонь недели',      desc: '7 дней подряд без пропуска',             check: s => s.maxStreak >= 7 },
+  { id: 'two_weeks',    emoji: '🌱', title: 'Росток',           desc: 'Выполнить 14 дней плана',                check: s => s.completedDays.length >= 14 },
+  { id: 'month_done',   emoji: '🌙', title: 'Первый месяц',     desc: 'Выполнить 30 дней плана',                check: s => s.completedDays.length >= 30 },
+  { id: 'streak_14',    emoji: '💪', title: 'Две недели огня',   desc: '14 дней подряд без пропуска',            check: s => s.maxStreak >= 14 },
+  { id: 'halfway',      emoji: '🎯', title: 'Половина пути',    desc: 'Выполнить 45 дней плана',                check: s => s.completedDays.length >= 45 },
+  { id: 'two_months',   emoji: '🦋', title: 'Два месяца',       desc: 'Выполнить 60 дней плана',                check: s => s.completedDays.length >= 60 },
+  { id: 'streak_30',    emoji: '🌊', title: 'Месяц без пропусков', desc: '30 дней подряд',                     check: s => s.maxStreak >= 30 },
+  { id: 'journal_10',   emoji: '📓', title: 'Летописец',        desc: 'Сделать 10 записей в журнале',           check: s => s.journalEntries.length >= 10 },
+  { id: 'journal_50',   emoji: '📖', title: 'Хроникёр',         desc: 'Сделать 50 записей в журнале',           check: s => s.journalEntries.length >= 50 },
+  { id: 'test_done',    emoji: '🧭', title: 'Честный взгляд',   desc: 'Пройти тест осознанности',               check: s => s.testDone },
+  { id: 'day_75',       emoji: '🏔️', title: 'Почти вершина',    desc: 'Выполнить 75 дней плана',                check: s => s.completedDays.length >= 75 },
+  { id: 'finished',     emoji: '🏆', title: 'Завершение',       desc: 'Пройти все 90 дней',                     check: s => s.completedDays.length >= 90 },
+];
+
+function getUnlockedAchievements(state: UserState): Achievement[] {
+  return ACHIEVEMENTS.filter(a => a.check(state));
+}
+
+function getNewAchievements(prev: UserState, next: UserState): Achievement[] {
+  const wasDone = new Set(getUnlockedAchievements(prev).map(a => a.id));
+  return getUnlockedAchievements(next).filter(a => !wasDone.has(a.id));
+}
+
 // ─── Screen types ─────────────────────────────────────────────────────────────
-type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | 'task-journal' | 'motivation';
+type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | 'task-journal' | 'motivation' | 'achievements';
 
 // ═════════════════════════════════════════════════════════════════════════════
 export default function App() {
@@ -400,6 +436,7 @@ export default function App() {
 
   const [journalDraft, setJournalDraft] = useState('');
   const [resetConfirm, setResetConfirm] = useState(false);
+  const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
 
   // ── Init ────────────────────────────────────────────────────────────────────
   useEffect(() => { init(); }, []);
@@ -497,12 +534,26 @@ export default function App() {
 
     setTaskDraft('');
 
+    // Проверяем новые ачивки
+    const nextState: UserState = {
+      ...userState,
+      journalEntries: newEntries,
+      completedDays: newCompleted,
+      currentDay: nextDay,
+      lastCompletedDate: dayNowComplete && !wasAlreadyComplete ? getTodayString() : userState.lastCompletedDate,
+      currentStreak: newStreak,
+      maxStreak: newMaxStreak,
+    };
+    const newAch = getNewAchievements(userState, nextState);
+
     if (dayNowComplete && !wasAlreadyComplete) {
       const randMsg = motivationMessages[Math.floor(Math.random() * motivationMessages.length)];
       setMotivationMsg(randMsg);
       setCompletedDayNum(activeDay);
+      setNewAchievements(newAch);
       setScreen('motivation');
     } else {
+      if (newAch.length > 0) setNewAchievements(newAch);
       setScreen('day-detail');
     }
   }
@@ -607,6 +658,12 @@ export default function App() {
             📓 Журнал записей
             {userState.journalEntries.length > 0 && <span style={{ marginLeft: 8, opacity: 0.8, fontWeight: 400 }}>({userState.journalEntries.length})</span>}
           </button>
+          <button style={S.btn('#2a1a3a')} onClick={() => setScreen('achievements')}>
+            🏅 Ачивки
+            <span style={{ marginLeft: 8, opacity: 0.8, fontWeight: 400 }}>
+              ({getUnlockedAchievements(userState).length}/{ACHIEVEMENTS.length})
+            </span>
+          </button>
         </div>
       </div>
     );
@@ -691,9 +748,71 @@ export default function App() {
           </div>
         </div>
         <div style={{ width: '100%', maxWidth: 360 }}>
-          <button style={S.btn('#2d5a9e')} onClick={() => setScreen('plan')}>📅 К плану</button>
-          <button style={S.btn('#333')} onClick={() => setScreen('home')}>На главную</button>
+          {newAchievements.length > 0 && (
+            <div style={{ ...S.card('#1e1a2e'), border: '1px solid #a855f744', marginBottom: '0.8rem' }}>
+              <p style={{ margin: '0 0 0.6rem', fontSize: '0.8rem', color: '#a855f7', fontWeight: 700, letterSpacing: '0.06em' }}>🏅 НОВАЯ АЧИВКА!</p>
+              {newAchievements.map(a => (
+                <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                  <span style={{ fontSize: '1.8rem' }}>{a.emoji}</span>
+                  <div>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '1rem' }}>{a.title}</p>
+                    <p style={{ margin: 0, fontSize: '0.82rem', color: '#888' }}>{a.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <button style={S.btn('#2d5a9e')} onClick={() => { setNewAchievements([]); setScreen('plan'); }}>📅 К плану</button>
+          <button style={S.btn('#333')} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
         </div>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // ACHIEVEMENTS
+  // ════════════════════════════════════════════════════════════════════════════
+  if (screen === 'achievements') {
+    const unlocked = getUnlockedAchievements(userState);
+    const unlockedIds = new Set(unlocked.map(a => a.id));
+
+    return (
+      <div style={S.page}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Ачивки</h1>
+        </div>
+
+        {/* Прогресс */}
+        <div style={{ ...S.card('#1a1a2a'), marginBottom: '1.2rem', textAlign: 'center' }}>
+          <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1.1rem' }}>
+            {unlocked.length} <span style={{ color: '#666', fontWeight: 400 }}>из</span> {ACHIEVEMENTS.length}
+          </p>
+          <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
+            <div style={{ background: 'linear-gradient(90deg,#69a8ff,#a855f7)', width: `${Math.round((unlocked.length / ACHIEVEMENTS.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.4s', minWidth: unlocked.length > 0 ? 8 : 0 }} />
+          </div>
+        </div>
+
+        {/* Список */}
+        {ACHIEVEMENTS.map(a => {
+          const done = unlockedIds.has(a.id);
+          return (
+            <div key={a.id} style={{ ...S.card(done ? '#1a1a2a' : '#111'), border: `1px solid ${done ? '#3a2a5a' : '#1a1a1a'}`, opacity: done ? 1 : 0.45 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ fontSize: '2.2rem', filter: done ? 'none' : 'grayscale(1)', flexShrink: 0 }}>{a.emoji}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>{a.title}</span>
+                    {done && <span style={S.tag('#69a8ff')}>✓</span>}
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: done ? '#aaa' : '#555' }}>{a.desc}</p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+
+        <button style={{ ...S.btn('#333'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
