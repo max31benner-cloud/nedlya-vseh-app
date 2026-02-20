@@ -10,15 +10,31 @@ interface JournalEntry {
   taskIdx?: number;   // 0, 1 или 2 — индекс задания внутри дня
 }
 
+interface DailyTask {
+  id: string;
+  text: string;
+  done: boolean;
+  priority: 'high' | 'medium' | 'low';
+  time?: string;
+}
+
+interface WeeklyGoal {
+  id: string;
+  text: string;
+  done: boolean;
+}
+
 interface UserState {
   testDone: boolean;
   testScore: number;
   currentDay: number;
-  completedDays: number[];          // дни, где все 3 задания выполнены
+  completedDays: number[];
   journalEntries: JournalEntry[];
   lastCompletedDate: string | null;
   currentStreak: number;
   maxStreak: number;
+  dailyTasks: DailyTask[];
+  weeklyGoals: WeeklyGoal[];
 }
 
 const DEFAULT_STATE: UserState = {
@@ -30,6 +46,8 @@ const DEFAULT_STATE: UserState = {
   lastCompletedDate: null,
   currentStreak: 0,
   maxStreak: 0,
+  dailyTasks: [],
+  weeklyGoals: [],
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -411,7 +429,7 @@ function getNewAchievements(prev: UserState, next: UserState): Achievement[] {
 }
 
 // ─── Screen types ─────────────────────────────────────────────────────────────
-type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | 'task-journal' | 'motivation' | 'achievements' | 'stats';
+type Screen = 'home' | 'test' | 'result' | 'plan' | 'journal' | 'day-detail' | 'task-journal' | 'motivation' | 'achievements' | 'stats' | 'planner';
 
 // ═════════════════════════════════════════════════════════════════════════════
 export default function App() {
@@ -437,6 +455,13 @@ export default function App() {
   const [resetConfirm, setResetConfirm] = useState(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [lessonOpen, setLessonOpen] = useState(false);
+  
+  // Planner state
+  const [plannerTab, setPlannerTab] = useState<'day' | 'week'>('day');
+  const [taskDraftPlanner, setTaskDraftPlanner] = useState('');
+  const [taskPriority, setTaskPriority] = useState<'high' | 'medium' | 'low'>('medium');
+  const [taskTime, setTaskTime] = useState('');
+  const [weekGoalDraft, setWeekGoalDraft] = useState('');
 
   // ── Init ────────────────────────────────────────────────────────────────────
   useEffect(() => { try { init(); } catch {} }, []);
@@ -648,6 +673,14 @@ export default function App() {
           <button style={S.btn('#2d5a9e')} onClick={() => setScreen('plan')}>
             📅 90-дневный план
             {userState.completedDays.length > 0 && <span style={{ marginLeft: 8, opacity: 0.8, fontWeight: 400 }}>({userState.completedDays.length}/90)</span>}
+          </button>
+          <button style={S.btn('#1a3a2a')} onClick={() => { setPlannerTab('day'); setScreen('planner'); }}>
+            📋 Планирование
+            {(userState.dailyTasks.length > 0 || userState.weeklyGoals.length > 0) && (
+              <span style={{ marginLeft: 8, opacity: 0.8, fontWeight: 400 }}>
+                ({userState.dailyTasks.filter(t => t.done).length}/{userState.dailyTasks.length})
+              </span>
+            )}
           </button>
           <button style={S.btn('#3a2a4a')} onClick={() => setScreen('journal')}>
             📓 Журнал записей
@@ -1247,6 +1280,281 @@ export default function App() {
         )}
 
         <button style={{ ...S.btn('#333'), marginTop: '0.5rem' }} onClick={() => setScreen('home')}>На главную</button>
+      </div>
+    );
+  }
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // PLANNER
+  // ════════════════════════════════════════════════════════════════════════════
+  if (screen === 'planner') {
+    const todayTasks = userState.dailyTasks;
+    const doneTasks = todayTasks.filter(t => t.done).length;
+    const weekGoals = userState.weeklyGoals;
+    const doneGoals = weekGoals.filter(g => g.done).length;
+
+    // Интеграция с 90-дневным планом
+    const dayData = dailyPlan[userState.currentDay - 1];
+    const planTasks = dayData ? dayData.tasks : [];
+
+    function addDailyTask() {
+      if (!taskDraftPlanner.trim()) return;
+      const task: DailyTask = {
+        id: Date.now().toString(),
+        text: taskDraftPlanner.trim(),
+        done: false,
+        priority: taskPriority,
+        time: taskTime || undefined,
+      };
+      updateState({ dailyTasks: [...userState.dailyTasks, task] });
+      setTaskDraftPlanner('');
+      setTaskTime('');
+      setTaskPriority('medium');
+    }
+
+    function toggleTask(id: string) {
+      updateState({
+        dailyTasks: userState.dailyTasks.map(t => t.id === id ? { ...t, done: !t.done } : t)
+      });
+    }
+
+    function deleteTask(id: string) {
+      updateState({ dailyTasks: userState.dailyTasks.filter(t => t.id !== id) });
+    }
+
+    function addWeekGoal() {
+      if (!weekGoalDraft.trim()) return;
+      const goal: WeeklyGoal = {
+        id: Date.now().toString(),
+        text: weekGoalDraft.trim(),
+        done: false,
+      };
+      updateState({ weeklyGoals: [...userState.weeklyGoals, goal] });
+      setWeekGoalDraft('');
+    }
+
+    function toggleGoal(id: string) {
+      updateState({
+        weeklyGoals: userState.weeklyGoals.map(g => g.id === id ? { ...g, done: !g.done } : g)
+      });
+    }
+
+    function deleteGoal(id: string) {
+      updateState({ weeklyGoals: userState.weeklyGoals.filter(g => g.id !== id) });
+    }
+
+    const priorityColors = { high: '#ff4444', medium: '#ff9800', low: '#4caf50' };
+    const priorityLabels = { high: '🔴 Важно', medium: '🟡 Средне', low: '🟢 Низко' };
+
+    return (
+      <div style={S.page}>
+        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Планирование</h1>
+        </div>
+
+        {/* Табы */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.2rem' }}>
+          <button
+            onClick={() => setPlannerTab('day')}
+            style={{
+              flex: 1,
+              background: plannerTab === 'day' ? '#2d5a9e' : '#1a1a1a',
+              color: '#fff',
+              border: 'none',
+              padding: '0.8rem',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+            }}>
+            📋 День
+          </button>
+          <button
+            onClick={() => setPlannerTab('week')}
+            style={{
+              flex: 1,
+              background: plannerTab === 'week' ? '#2d5a9e' : '#1a1a1a',
+              color: '#fff',
+              border: 'none',
+              padding: '0.8rem',
+              borderRadius: '12px',
+              cursor: 'pointer',
+              fontWeight: 700,
+              fontSize: '0.95rem',
+            }}>
+            📅 Неделя
+          </button>
+        </div>
+
+        {/* TAB: ДЕНЬ */}
+        {plannerTab === 'day' && (
+          <>
+            {/* Интеграция с 90-дневным планом */}
+            {dayData && (
+              <div style={{ ...S.card('#1a2040'), marginBottom: '1rem', borderLeft: '3px solid #69a8ff' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                  <span style={S.tag('#69a8ff')}>День {userState.currentDay} · {dayData.theme}</span>
+                  <button
+                    onClick={() => setScreen('day-detail')}
+                    style={{ background: 'none', border: 'none', color: '#69a8ff', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
+                    Открыть →
+                  </button>
+                </div>
+                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#aaa' }}>
+                  3 задания по плану: {planTasks.map((_, i) => isTaskDone(userState.journalEntries, userState.currentDay, i) ? '✓' : '○').join(' ')}
+                </p>
+              </div>
+            )}
+
+            {/* Прогресс дня */}
+            {todayTasks.length > 0 && (
+              <div style={{ ...S.card('#1a1a2a'), marginBottom: '1rem', textAlign: 'center' }}>
+                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem' }}>
+                  {doneTasks} <span style={{ color: '#666', fontWeight: 400 }}>из</span> {todayTasks.length}
+                </p>
+                <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
+                  <div style={{ background: '#4caf50', width: `${Math.round((doneTasks / todayTasks.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneTasks > 0 ? 8 : 0 }} />
+                </div>
+              </div>
+            )}
+
+            {/* Добавить задачу */}
+            <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+              <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: '#888' }}>НОВАЯ ЗАДАЧА</p>
+              <input
+                value={taskDraftPlanner}
+                onChange={e => setTaskDraftPlanner(e.target.value)}
+                placeholder="Что нужно сделать?"
+                style={{ width: '100%', padding: '0.8rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
+              />
+              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.8rem' }}>
+                <input
+                  type="time"
+                  value={taskTime}
+                  onChange={e => setTaskTime(e.target.value)}
+                  style={{ flex: 1, padding: '0.7rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', fontSize: '0.9rem' }}
+                />
+                <select
+                  value={taskPriority}
+                  onChange={e => setTaskPriority(e.target.value as any)}
+                  style={{ flex: 1, padding: '0.7rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', fontSize: '0.9rem' }}>
+                  <option value="high">🔴 Важно</option>
+                  <option value="medium">🟡 Средне</option>
+                  <option value="low">🟢 Низко</option>
+                </select>
+              </div>
+              <button
+                onClick={addDailyTask}
+                disabled={!taskDraftPlanner.trim()}
+                style={{ ...S.btn(taskDraftPlanner.trim() ? '#4caf50' : '#333'), marginBottom: 0, opacity: taskDraftPlanner.trim() ? 1 : 0.5, cursor: taskDraftPlanner.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
+                ✚ Добавить задачу
+              </button>
+            </div>
+
+            {/* Список задач */}
+            {todayTasks.length > 0 ? (
+              todayTasks.map(task => (
+                <div key={task.id} style={{ ...S.card(task.done ? '#1a2e1a' : '#1e1e1e'), marginBottom: '0.6rem', border: `1px solid ${task.done ? '#2a4a2a' : priorityColors[task.priority]}44` }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={task.done}
+                      onChange={() => toggleTask(task.id)}
+                      style={{ width: 20, height: 20, cursor: 'pointer', marginTop: 2, flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
+                        {task.time && <span style={S.tag('#2d5a9e')}>{task.time}</span>}
+                        <span style={S.tag(priorityColors[task.priority])}>{priorityLabels[task.priority]}</span>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '0.95rem', textDecoration: task.done ? 'line-through' : 'none', color: task.done ? '#666' : '#eee' }}>
+                        {task.text}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteTask(task.id)}
+                      style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '1rem', flexShrink: 0 }}>
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#444' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📋</div>
+                <p style={{ margin: 0 }}>Добавь задачи на сегодня</p>
+              </div>
+            )}
+          </>
+        )}
+
+        {/* TAB: НЕДЕЛЯ */}
+        {plannerTab === 'week' && (
+          <>
+            {/* Прогресс недели */}
+            {weekGoals.length > 0 && (
+              <div style={{ ...S.card('#1a1a2a'), marginBottom: '1rem', textAlign: 'center' }}>
+                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem' }}>
+                  {doneGoals} <span style={{ color: '#666', fontWeight: 400 }}>из</span> {weekGoals.length}
+                </p>
+                <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
+                  <div style={{ background: '#69a8ff', width: `${Math.round((doneGoals / weekGoals.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneGoals > 0 ? 8 : 0 }} />
+                </div>
+              </div>
+            )}
+
+            {/* Добавить цель */}
+            <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+              <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: '#888' }}>НОВАЯ ЦЕЛЬ НА НЕДЕЛЮ</p>
+              <input
+                value={weekGoalDraft}
+                onChange={e => setWeekGoalDraft(e.target.value)}
+                placeholder="Что хочу достичь на этой неделе?"
+                style={{ width: '100%', padding: '0.8rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
+              />
+              <button
+                onClick={addWeekGoal}
+                disabled={!weekGoalDraft.trim()}
+                style={{ ...S.btn(weekGoalDraft.trim() ? '#69a8ff' : '#333'), marginBottom: 0, opacity: weekGoalDraft.trim() ? 1 : 0.5, cursor: weekGoalDraft.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
+                ✚ Добавить цель
+              </button>
+            </div>
+
+            {/* Список целей */}
+            {weekGoals.length > 0 ? (
+              weekGoals.map(goal => (
+                <div key={goal.id} style={{ ...S.card(goal.done ? '#1a2a40' : '#1e1e1e'), marginBottom: '0.6rem', border: `1px solid ${goal.done ? '#2a4a6a' : '#2a2a3a'}` }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={goal.done}
+                      onChange={() => toggleGoal(goal.id)}
+                      style={{ width: 20, height: 20, cursor: 'pointer', marginTop: 2, flexShrink: 0 }}
+                    />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ margin: 0, fontSize: '0.95rem', textDecoration: goal.done ? 'line-through' : 'none', color: goal.done ? '#666' : '#eee' }}>
+                        {goal.text}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => deleteGoal(goal.id)}
+                      style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '1rem', flexShrink: 0 }}>
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#444' }}>
+                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📅</div>
+                <p style={{ margin: 0 }}>Поставь цели на неделю</p>
+              </div>
+            )}
+          </>
+        )}
+
+        <button style={{ ...S.btn('#333'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
