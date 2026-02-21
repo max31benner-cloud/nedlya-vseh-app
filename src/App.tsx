@@ -1545,15 +1545,31 @@ export default function App() {
                   type="time"
                   value={taskTime}
                   onChange={e => setTaskTime(e.target.value)}
-                  style={{ flex: 1, padding: '0.7rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}
+                  style={{ flex: 1, padding: '0.7rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}
                 />
                 <select
                   value={taskPriority}
                   onChange={e => setTaskPriority(e.target.value as any)}
-                  style={{ flex: 1, padding: '0.7rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}>
-                  <option value="high">🔴 Важно</option>
-                  <option value="medium">🟡 Средне</option>
-                  <option value="low">🟢 Низко</option>
+                  style={{ 
+                    flex: 1, 
+                    padding: '0.7rem 2.5rem 0.7rem 0.7rem', 
+                    background: userState.theme === 'light' ? '#fff' : c.inputBg,
+                    color: c.text, 
+                    border: `1px solid ${c.border}`, 
+                    borderRadius: '10px', 
+                    fontSize: '0.9rem',
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+                    fontWeight: 600,
+                    appearance: 'none',
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='${userState.theme === 'light' ? '%2386868b' : '%23999'}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'right 0.7rem center',
+                    cursor: 'pointer',
+                    boxShadow: userState.theme === 'light' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
+                  }}>
+                  <option value="high" style={{ background: userState.theme === 'light' ? '#fff' : '#1c1c1e', color: c.text, padding: '0.5rem' }}>🔴 Важно</option>
+                  <option value="medium" style={{ background: userState.theme === 'light' ? '#fff' : '#1c1c1e', color: c.text, padding: '0.5rem' }}>🟡 Средне</option>
+                  <option value="low" style={{ background: userState.theme === 'light' ? '#fff' : '#1c1c1e', color: c.text, padding: '0.5rem' }}>🟢 Низко</option>
                 </select>
               </div>
               <button
