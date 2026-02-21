@@ -611,7 +611,7 @@ export default function App() {
   }
 
   function resultLabel(s: number) {
-    if (s <= 8) return { text: 'Низкий уровень — круто, ты уже умеешь ставить границы! Задания помогут укрепить этот навык!', color: '#4caf50' };
+    if (s <= 8) return { text: 'Низкий уровень — круто, ты уже умеешь ставить границы! Задания помогут укрепить этот навык!', color: 'c.success' };
     if (s <= 16) return { text: 'Средний уровень — есть над чем поработать. Давай перейдем к практике!', color: '#ff9800' };
     return { text: 'Высокий уровень — пора менять подход. Давай перейдем к практике!', color: '#ff4444' };
   }
@@ -690,60 +690,63 @@ export default function App() {
 
         <div style={{ width: '100%', maxWidth: 400 }}>
           {!userState.testDone
-            ? <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)', transition: 'all 0.2s ease' }} onClick={startTest}>Пройти тест</button>
+            ? <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)', transition: 'all 0.2s ease' }} onClick={startTest}>Пройти тест</button>
             : <button style={{ background: userState.theme === 'light' ? '#f5f5f7' : '#2c2c2e', color: c.text, border: `1px solid ${c.border}`, padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', transition: 'all 0.2s ease' }} onClick={startTest}>Пройти тест заново</button>}
           
-          <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('plan')}>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('plan')}>
             <span>📅 90-дневный план</span>
             {userState.completedDays.length > 0 && <span style={{ opacity: 0.8, fontWeight: 500, fontSize: '0.9rem' }}>({userState.completedDays.length}/90)</span>}
           </button>
           
-          <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => { setPlannerTab('day'); setScreen('planner'); }}>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => { setPlannerTab('day'); setScreen('planner'); }}>
             <span>📋 Планирование</span>
             {(userState.dailyTasks.length > 0 || userState.weeklyGoals.length > 0) && (
               <span style={{ opacity: 0.8, fontWeight: 500, fontSize: '0.9rem' }}>({userState.dailyTasks.filter(t => t.done).length}/{userState.dailyTasks.length})</span>
             )}
           </button>
           
-          <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('journal')}>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('journal')}>
             <span>📓 Журнал записей</span>
             {userState.journalEntries.length > 0 && <span style={{ opacity: 0.8, fontWeight: 500, fontSize: '0.9rem' }}>({userState.journalEntries.length})</span>}
           </button>
           
-          <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('achievements')}>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('achievements')}>
             <span>🏅 Ачивки</span>
             <span style={{ opacity: 0.8, fontWeight: 500, fontSize: '0.9rem' }}>({getUnlockedAchievements(userState).length}/{ACHIEVEMENTS.length})</span>
           </button>
           
-          <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('stats')}>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('stats')}>
             📊 Статистика
           </button>
         </div>
       </div>
     );
   }
+  // ════════════════════════════════════════════════════════════════════════════
   // TEST
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'test') {
     const q = questions[testStep];
     const progress = Math.round((testStep / questions.length) * 100);
+    const c = getColors(userState.theme === 'dark');
+    
     return (
-      <div style={{ ...S.page, ...S.centered }}>
-        <div style={{ width: '100%', maxWidth: 400, marginBottom: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#888', marginBottom: 6 }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '100%', maxWidth: 400, marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: c.textSec, marginBottom: 8, fontWeight: 500 }}>
             <span>Вопрос {testStep + 1} из {questions.length}</span><span>{progress}%</span>
           </div>
-          <div style={{ background: '#222', borderRadius: 8, height: 6 }}>
-            <div style={{ background: '#69a8ff', width: `${progress}%`, height: 6, borderRadius: 8, transition: 'width 0.3s' }} />
+          <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 8, height: 6 }}>
+            <div style={{ background: c.accent, width: `${progress}%`, height: 6, borderRadius: 8, transition: 'width 0.3s ease' }} />
           </div>
         </div>
-        <p style={{ fontSize: '1.35rem', maxWidth: 400, textAlign: 'center', margin: '0 0 2rem', lineHeight: 1.5 }}>{q.q}</p>
+        <p style={{ fontSize: '1.4rem', maxWidth: 400, textAlign: 'center', margin: '0 0 2rem', lineHeight: 1.5, fontWeight: 600, letterSpacing: '-0.01em' }}>{q.q}</p>
         <div style={{ width: '100%', maxWidth: 400 }}>
-          <button style={S.btn('#1e3a5f')} onClick={() => handleTestAnswer(2)}>Да, часто</button>
-          <button style={S.btn('#333')} onClick={() => handleTestAnswer(1)}>Иногда</button>
-          <button style={S.btn('#222')} onClick={() => handleTestAnswer(0)}>Нет, редко</button>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => handleTestAnswer(2)}>Да, часто</button>
+          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(1)}>Иногда</button>
+          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(0)}>Нет, редко</button>
         </div>
-        <button style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', marginTop: '1rem' }} onClick={() => setScreen('home')}>← Назад</button>
+        <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', marginTop: '1rem', fontSize: '1rem', fontWeight: 500 }} onClick={() => setScreen('home')}>← Назад</button>
       </div>
     );
   }
@@ -753,69 +756,73 @@ export default function App() {
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'result') {
     const res = resultLabel(userState.testScore);
+    const c = getColors(userState.theme === 'dark');
+    
     return (
-      <div style={{ ...S.page, ...S.centered }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Результат теста</h1>
-        <div style={{ fontSize: '4rem', fontWeight: 700, color: res.color, margin: '0.5rem 0' }}>{userState.testScore}</div>
-        <p style={{ fontSize: '1rem', color: '#888', marginBottom: '0.2rem' }}>баллов из 24</p>
-        <p style={{ fontSize: '1.25rem', textAlign: 'center', maxWidth: 340, margin: '1rem 0 2rem', color: res.color }}>{res.text}</p>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <h1 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Результат теста</h1>
+        <div style={{ fontSize: '4.5rem', fontWeight: 800, color: c.accent, margin: '0.5rem 0', letterSpacing: '-0.03em' }}>{userState.testScore}</div>
+        <p style={{ fontSize: '0.9rem', color: c.textSec, marginBottom: '0.5rem', fontWeight: 500 }}>баллов из 24</p>
+        <p style={{ fontSize: '1.15rem', textAlign: 'center', maxWidth: 340, margin: '1rem 0 2rem', color: c.text, lineHeight: 1.5 }}>{res.text}</p>
         <div style={{ width: '100%', maxWidth: 400 }}>
-          <button style={S.btn('#2d5a9e')} onClick={() => setScreen('plan')}>📅 Начать 90-дневный план</button>
-          <button style={S.btn('#3a2a4a')} onClick={() => setScreen('journal')}>📓 Открыть журнал</button>
-          <button style={S.btn('#333')} onClick={() => setScreen('home')}>На главную</button>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('plan')}>📅 Начать 90-дневный план</button>
+          <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('journal')}>📓 Открыть журнал</button>
+          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('home')}>На главную</button>
         </div>
       </div>
     );
   }
-
+  // ════════════════════════════════════════════════════════════════════════════
   // ════════════════════════════════════════════════════════════════════════════
   // MOTIVATION
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'motivation') {
     const totalDone = userState.completedDays.length;
     const streak = userState.currentStreak;
+    const c = getColors(userState.theme === 'dark');
+
     return (
-      <div style={{ ...S.page, ...S.centered, textAlign: 'center' }}>
-        <div style={{ fontSize: '5rem', marginBottom: '1rem', filter: 'drop-shadow(0 0 20px rgba(105,168,255,0.4))' }}>{motivationMsg.emoji}</div>
-        <div style={{ background: 'linear-gradient(135deg,#1a2a40,#1a3520)', border: '1px solid #69a8ff33', borderRadius: '20px', padding: '2rem 1.5rem', maxWidth: 360, width: '100%', marginBottom: '1.2rem' }}>
-          <div style={{ display: 'inline-block', background: '#69a8ff22', border: '1px solid #69a8ff55', borderRadius: '10px', padding: '4px 12px', fontSize: '0.8rem', color: '#69a8ff', fontWeight: 700, marginBottom: '0.8rem', letterSpacing: '0.05em' }}>ДЕНЬ {completedDayNum} ЗАКРЫТ ✓</div>
-          <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.8rem', color: '#fff' }}>{motivationMsg.title}</h2>
-          <p style={{ fontSize: '1.1rem', color: '#bbb', lineHeight: 1.6, margin: 0 }}>{motivationMsg.text}</p>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+        <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{motivationMsg.emoji}</div>
+        <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: '20px', padding: '2rem 1.5rem', maxWidth: 360, width: '100%', marginBottom: '1.2rem', boxShadow: userState.theme === 'light' ? '0 4px 16px rgba(0,0,0,0.1)' : '0 4px 16px rgba(0,0,0,0.5)' }}>
+          <div style={{ display: 'inline-block', background: `${c.accent}15`, border: `1px solid ${c.accent}40`, borderRadius: '10px', padding: '4px 12px', fontSize: '0.75rem', color: c.accent, fontWeight: 700, marginBottom: '0.8rem', letterSpacing: '0.05em' }}>ДЕНЬ {completedDayNum} ЗАКРЫТ ✓</div>
+          <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 0.8rem', color: c.text, letterSpacing: '-0.02em' }}>{motivationMsg.title}</h2>
+          <p style={{ fontSize: '1.05rem', color: c.textSec, lineHeight: 1.6, margin: 0 }}>{motivationMsg.text}</p>
         </div>
         <div style={{ display: 'flex', gap: '0.8rem', width: '100%', maxWidth: 360, marginBottom: '1.5rem' }}>
-          <div style={{ flex: 1, background: streak > 1 ? 'linear-gradient(135deg,#2a1a0a,#3a2010)' : '#1a1a1a', border: `1px solid ${streak > 1 ? '#ff660044' : '#222'}`, borderRadius: '14px', padding: '1rem 0.5rem', textAlign: 'center' }}>
+          <div style={{ flex: 1, background: c.card, border: `1px solid ${c.border}`, borderRadius: '16px', padding: '1rem 0.5rem', textAlign: 'center', boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
             <div style={{ fontSize: '1.8rem' }}>🔥</div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ff8c42', lineHeight: 1.1 }}>{streak}</div>
-            <div style={{ fontSize: '0.7rem', color: '#666', marginTop: 2 }}>{streak === 1 ? 'день подряд' : streak >= 2 && streak <= 4 ? 'дня подряд' : 'дней подряд'}</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#ff8c42', lineHeight: 1.1, letterSpacing: '-0.02em' }}>{streak}</div>
+            <div style={{ fontSize: '0.68rem', color: c.textSec, marginTop: 2, fontWeight: 500 }}>{streak === 1 ? 'день подряд' : streak >= 2 && streak <= 4 ? 'дня подряд' : 'дней подряд'}</div>
           </div>
-          <div style={{ flex: 2, ...S.card('#1a1a2a'), marginBottom: 0 }}>
+          <div style={{ flex: 2, background: c.card, border: `1px solid ${c.border}`, borderRadius: '16px', padding: '1rem', boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <span style={{ fontSize: '0.85rem', color: '#888' }}>Прогресс</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#4caf50' }}>{totalDone} / 90</span>
+              <span style={{ fontSize: '0.8rem', color: c.textSec, fontWeight: 500 }}>Прогресс</span>
+              <span style={{ fontSize: '0.8rem', fontWeight: 700, color: c.success }}>{totalDone} / 90</span>
             </div>
-            <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
-              <div style={{ background: 'linear-gradient(90deg,#4caf50,#69a8ff)', width: `${Math.round((totalDone / 90) * 100)}%`, height: 8, borderRadius: 8, minWidth: totalDone > 0 ? 8 : 0 }} />
+            <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 8, height: 6 }}>
+              <div style={{ background: c.success, width: `${Math.round((totalDone / 90) * 100)}%`, height: 6, borderRadius: 8, minWidth: totalDone > 0 ? 6 : 0, transition: 'width 0.3s ease' }} />
             </div>
-            <p style={{ margin: '0.5rem 0 0', fontSize: '0.78rem', color: '#555', textAlign: 'center' }}>🗓 Возвращайся завтра!</p>
+            <p style={{ margin: '0.6rem 0 0', fontSize: '0.75rem', color: c.textSec, textAlign: 'center', fontWeight: 500 }}>🗓 Возвращайся завтра!</p>
           </div>
         </div>
         <div style={{ width: '100%', maxWidth: 360 }}>
           {newAchievements.length > 0 && (
-            <div style={{ ...S.card('#1e1a2e'), border: '1px solid #a855f744', marginBottom: '0.8rem' }}>
-              <p style={{ margin: '0 0 0.6rem', fontSize: '0.8rem', color: '#a855f7', fontWeight: 700, letterSpacing: '0.06em' }}>🏅 НОВАЯ АЧИВКА!</p>
+            <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: '16px', padding: '1rem 1.2rem', marginBottom: '0.8rem', boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+              <p style={{ margin: '0 0 0.8rem', fontSize: '0.75rem', color: c.accent, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase' }}>🏅 Новая ачивка!</p>
               {newAchievements.map(a => (
                 <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                   <span style={{ fontSize: '1.8rem' }}>{a.emoji}</span>
                   <div>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: '1rem' }}>{a.title}</p>
-                    <p style={{ margin: 0, fontSize: '0.82rem', color: '#888' }}>{a.desc}</p>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: '1rem', color: c.text }}>{a.title}</p>
+                    <p style={{ margin: 0, fontSize: '0.82rem', color: c.textSec }}>{a.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           )}
-          <button style={S.btn('#2d5a9e')} onClick={() => { setNewAchievements([]); setScreen('plan'); }}>📅 К плану</button>
-          <button style={S.btn('#333')} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
+          <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => { setNewAchievements([]); setScreen('plan'); }}>📅 К плану</button>
+          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
         </div>
       </div>
     );
@@ -828,20 +835,22 @@ export default function App() {
     const unlocked = getUnlockedAchievements(userState);
     const unlockedIds = new Set(unlocked.map(a => a.id));
 
+    const c = getColors(userState.theme === 'dark');
+
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Ачивки</h1>
         </div>
 
         {/* Прогресс */}
         <div style={{ ...S.card('#1a1a2a'), marginBottom: '1.2rem', textAlign: 'center' }}>
           <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1.1rem' }}>
-            {unlocked.length} <span style={{ color: '#666', fontWeight: 400 }}>из</span> {ACHIEVEMENTS.length}
+            {unlocked.length} <span style={{ color: c.textSec, fontWeight: 400 }}>из</span> {ACHIEVEMENTS.length}
           </p>
-          <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
-            <div style={{ background: 'linear-gradient(90deg,#69a8ff,#a855f7)', width: `${Math.round((unlocked.length / ACHIEVEMENTS.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.4s', minWidth: unlocked.length > 0 ? 8 : 0 }} />
+          <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
+            <div style={{ background: 'linear-gradient(90deg,c.accent,#a855f7)', width: `${Math.round((unlocked.length / ACHIEVEMENTS.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.4s', minWidth: unlocked.length > 0 ? 8 : 0 }} />
           </div>
         </div>
 
@@ -855,7 +864,7 @@ export default function App() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
                     <span style={{ fontWeight: 700, fontSize: '1rem' }}>{a.title}</span>
-                    {done && <span style={S.tag('#69a8ff')}>✓</span>}
+                    {done && <span style={S.tag('c.accent')}>✓</span>}
                   </div>
                   <p style={{ margin: 0, fontSize: '0.85rem', color: done ? '#aaa' : '#555' }}>{a.desc}</p>
                 </div>
@@ -876,22 +885,24 @@ export default function App() {
     const completed = userState.completedDays.length;
     const progressPct = Math.round((completed / 90) * 100);
 
+    const c = getColors(userState.theme === 'dark');
+
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>90-дневный план</h1>
         </div>
 
         <div style={{ ...S.card('#1a2a1a'), marginBottom: '1.2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
             <span style={{ fontWeight: 700 }}>Прогресс</span>
-            <span style={{ color: '#4caf50', fontWeight: 700 }}>{completed} / 90</span>
+            <span style={{ color: 'c.success', fontWeight: 700 }}>{completed} / 90</span>
           </div>
-          <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
-            <div style={{ background: '#4caf50', width: `${progressPct}%`, height: 8, borderRadius: 8 }} />
+          <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
+            <div style={{ background: 'c.success', width: `${progressPct}%`, height: 8, borderRadius: 8 }} />
           </div>
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: '#888' }}>Текущий день: {userState.currentDay}</p>
+          <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: c.textSec }}>Текущий день: {userState.currentDay}</p>
         </div>
 
         {Array.from({ length: 90 }, (_, i) => i + 1).map(day => {
@@ -902,25 +913,25 @@ export default function App() {
           if (!dayData) return null; // защита от краша
 
           return (
-            <div key={day} style={{ ...S.card(isDone ? '#1a2e1a' : isCurrent ? '#1a2040' : '#1a1a1a'), border: isCurrent ? '1px solid #69a8ff44' : '1px solid transparent', cursor: 'pointer' }}
+            <div key={day} style={{ ...S.card(isDone ? '#1a2e1a' : isCurrent ? '#1a2040' : '#1a1a1a'), border: isCurrent ? '1px solid c.accent44' : '1px solid transparent', cursor: 'pointer' }}
               onClick={() => openDay(day)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
-                    {isCurrent && <span style={S.tag('#69a8ff')}>Сегодня</span>}
-                    {isDone && <span style={S.tag('#4caf50')}>✓ Выполнен</span>}
+                    {isCurrent && <span style={S.tag('c.accent')}>Сегодня</span>}
+                    {isDone && <span style={S.tag('c.success')}>✓ Выполнен</span>}
                     {!isDone && progress > 0 && <span style={S.tag('#ff9800')}>{progress}/3</span>}
                   </div>
                   <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.4 }}>
-                    <span style={{ color: '#69a8ff', fontWeight: 700, marginRight: 6 }}>День {day}.</span>
+                    <span style={{ color: c.accent, fontWeight: 700, marginRight: 6 }}>День {day}.</span>
                     {dayData.theme}
                   </p>
                 </div>
-                <div style={{ color: '#444', fontSize: '1.2rem', flexShrink: 0 }}>›</div>
+                <div style={{ color: c.textSec, fontSize: '1.2rem', flexShrink: 0 }}>›</div>
               </div>
               <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
                 {[0, 1, 2].map(i => (
-                  <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: isTaskDone(userState.journalEntries, day, i) ? '#4caf50' : '#2a2a2a' }} />
+                  <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: isTaskDone(userState.journalEntries, day, i) ? 'c.success' : '#2a2a2a' }} />
                 ))}
               </div>
             </div>
@@ -940,16 +951,18 @@ export default function App() {
     const isDayDone = userState.completedDays.includes(activeDay);
     const taskLabels = ['🔵 Практика', '👁 Наблюдение', '✍️ Рефлексия'];
 
+    const c = getColors(userState.theme === 'dark');
+
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('plan')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('plan')}>←</button>
           <h2 style={{ margin: 0, fontSize: '1.2rem' }}>День {activeDay}</h2>
         </div>
 
         {/* Тема дня */}
-        <div style={{ ...S.card('#1a2040'), marginBottom: '0.8rem', borderLeft: '3px solid #69a8ff' }}>
-          <div style={S.tag('#69a8ff')}>Тема дня</div>
+        <div style={{ ...S.card('#1a2040'), marginBottom: '0.8rem', borderLeft: '3px solid c.accent' }}>
+          <div style={S.tag('c.accent')}>Тема дня</div>
           <p style={{ margin: '6px 0 0', fontSize: '1.2rem', fontWeight: 700, lineHeight: 1.4 }}>{dayData.theme}</p>
         </div>
 
@@ -961,10 +974,10 @@ export default function App() {
               <span style={{ fontSize: '1.1rem' }}>📖</span>
               <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#a78bfa' }}>Мини-урок</span>
             </div>
-            <span style={{ color: '#555', fontSize: '1rem', transition: 'transform 0.2s', display: 'inline-block', transform: lessonOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>›</span>
+            <span style={{ color: c.textSec, fontSize: '1rem', transition: 'transform 0.2s', display: 'inline-block', transform: lessonOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>›</span>
           </div>
           {lessonOpen && (
-            <p style={{ margin: '0.8rem 0 0', fontSize: '0.92rem', color: '#ccc', lineHeight: 1.7 }}>
+            <p style={{ margin: '0.8rem 0 0', fontSize: '0.92rem', color: c.textSec, lineHeight: 1.7 }}>
               {dayData.lesson}
             </p>
           )}
@@ -981,7 +994,7 @@ export default function App() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', gap: 6, marginBottom: 6, alignItems: 'center' }}>
-                    <span style={S.tag(done ? '#4caf50' : i === 0 ? '#2d5a9e' : i === 1 ? '#5a3a8a' : '#3a5a3a')}>
+                    <span style={S.tag(done ? 'c.success' : i === 0 ? '#2d5a9e' : i === 1 ? '#5a3a8a' : '#3a5a3a')}>
                       {done ? '✓ ' : ''}{taskLabels[i]}
                     </span>
                   </div>
@@ -993,8 +1006,8 @@ export default function App() {
               {entries.length > 0 && (
                 <div style={{ marginTop: '0.8rem', borderTop: '1px solid #2a2a3a', paddingTop: '0.8rem' }}>
                   {entries.map(e => (
-                    <div key={e.id} style={{ fontSize: '0.88rem', color: '#888', marginBottom: 4 }}>
-                      <span style={{ color: '#555', fontSize: '0.75rem' }}>{e.date} · </span>{e.text}
+                    <div key={e.id} style={{ fontSize: '0.88rem', color: c.textSec, marginBottom: 4 }}>
+                      <span style={{ color: c.textSec, fontSize: '0.75rem' }}>{e.date} · </span>{e.text}
                     </div>
                   ))}
                 </div>
@@ -1015,10 +1028,10 @@ export default function App() {
         <div style={{ ...S.card('#111'), textAlign: 'center', marginTop: '0.5rem' }}>
           <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
             {[0, 1, 2].map(i => (
-              <div key={i} style={{ width: 40, height: 6, borderRadius: 3, background: isTaskDone(userState.journalEntries, activeDay, i) ? '#4caf50' : '#2a2a2a' }} />
+              <div key={i} style={{ width: 40, height: 6, borderRadius: 3, background: isTaskDone(userState.journalEntries, activeDay, i) ? 'c.success' : '#2a2a2a' }} />
             ))}
           </div>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: isDayDone ? '#4caf50' : '#666' }}>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: isDayDone ? 'c.success' : '#666' }}>
             {isDayDone ? '✓ День полностью выполнен!' : `Выполнено ${dayProgress(userState.journalEntries, activeDay)} из 3 заданий`}
           </p>
         </div>
@@ -1038,41 +1051,43 @@ export default function App() {
     const prevEntries = userState.journalEntries.filter(e => e.day === activeDay && e.taskIdx === activeTaskIdx);
     const canSave = taskDraft.trim().length > 0;
 
+    const c = getColors(userState.theme === 'dark');
+
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('day-detail')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('day-detail')}>←</button>
           <h2 style={{ margin: 0, fontSize: '1.1rem' }}>День {activeDay} · {taskLabels[activeTaskIdx]}</h2>
         </div>
 
-        <div style={{ ...S.card('#1a2040'), marginBottom: '1.2rem', borderLeft: '3px solid #69a8ff' }}>
-          <div style={S.tag('#69a8ff')}>{taskLabels[activeTaskIdx]}</div>
+        <div style={{ ...S.card('#1a2040'), marginBottom: '1.2rem', borderLeft: '3px solid c.accent' }}>
+          <div style={S.tag('c.accent')}>{taskLabels[activeTaskIdx]}</div>
           <p style={{ margin: '6px 0 0', fontSize: '1rem', lineHeight: 1.5 }}>{taskText}</p>
         </div>
 
         {prevEntries.length > 0 && (
           <div style={{ marginBottom: '1rem' }}>
-            <p style={{ color: '#888', fontSize: '0.85rem', margin: '0 0 8px' }}>Предыдущие записи:</p>
+            <p style={{ color: c.textSec, fontSize: '0.85rem', margin: '0 0 8px' }}>Предыдущие записи:</p>
             {prevEntries.map(e => (
               <div key={e.id} style={{ ...S.card('#1e1e1e'), fontSize: '0.9rem' }}>
-                <div style={{ color: '#555', fontSize: '0.75rem', marginBottom: 4 }}>{e.date}</div>
+                <div style={{ color: c.textSec, fontSize: '0.75rem', marginBottom: 4 }}>{e.date}</div>
                 {e.text}
               </div>
             ))}
           </div>
         )}
 
-        <p style={{ color: '#aaa', fontSize: '0.95rem', margin: '0 0 8px' }}>Опиши честно — что произошло, что почувствовал?</p>
+        <p style={{ color: c.textSec, fontSize: '0.95rem', margin: '0 0 8px' }}>Опиши честно — что произошло, что почувствовал?</p>
         <textarea value={taskDraft} onChange={e => setTaskDraft(e.target.value)}
           placeholder="Пиши честно — это только для тебя..."
-          style={{ width: '100%', minHeight: '140px', padding: '1rem', background: '#1a1a1a', color: '#fff', border: `1px solid ${canSave ? '#69a8ff55' : '#333'}`, borderRadius: '14px', marginBottom: '1rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
+          style={{ width: '100%', minHeight: '140px', padding: '1rem', background: c.card, color: c.text, border: `1px solid ${canSave ? 'c.accent55' : '#333'}`, borderRadius: '14px', marginBottom: '1rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
 
-        <button style={{ ...S.btn(canSave ? '#4caf50' : '#333'), opacity: canSave ? 1 : 0.5, cursor: canSave ? 'pointer' : 'not-allowed' }}
+        <button style={{ ...S.btn(canSave ? 'c.success' : '#333'), opacity: canSave ? 1 : 0.5, cursor: canSave ? 'pointer' : 'not-allowed' }}
           disabled={!canSave} onClick={saveTaskEntry}>
           💾 Сохранить запись
         </button>
-        <button style={S.btn('#333')} onClick={() => setScreen('day-detail')}>← Назад</button>
-        <p style={{ fontSize: '0.8rem', color: '#555', textAlign: 'center', marginTop: 4 }}>
+        <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('day-detail')}>← Назад</button>
+        <p style={{ fontSize: '0.8rem', color: c.textSec, textAlign: 'center', marginTop: 4 }}>
           День закроется, когда все 3 задания будут с записями
         </p>
       </div>
@@ -1086,29 +1101,31 @@ export default function App() {
     const freeEntries = userState.journalEntries.filter(e => !e.day);
     const taskEntries = userState.journalEntries.filter(e => e.day);
 
+    const c = getColors(userState.theme === 'dark');
+
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Журнал записей</h1>
         </div>
 
         <textarea value={journalDraft} onChange={e => setJournalDraft(e.target.value)}
           placeholder="Что ты чувствуешь сегодня? Что хочешь изменить?"
-          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: '#1a1a1a', color: '#fff', border: '1px solid #333', borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
-        <button style={{ ...S.btn(journalDraft.trim() ? '#69a8ff' : '#333'), opacity: journalDraft.trim() ? 1 : 0.5 }}
+          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.card, color: c.text, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
+        <button style={{ ...S.btn(journalDraft.trim() ? 'c.accent' : '#333'), opacity: journalDraft.trim() ? 1 : 0.5 }}
           disabled={!journalDraft.trim()} onClick={saveFreeEntry}>
           💾 Сохранить запись
         </button>
 
         {freeEntries.length > 0 && (
           <>
-            <h2 style={{ fontSize: '1.1rem', color: '#888', margin: '1.5rem 0 0.5rem' }}>Свободные записи</h2>
+            <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.5rem' }}>Свободные записи</h2>
             {[...freeEntries].reverse().map(e => (
               <div key={e.id} style={{ ...S.card('#1e1e1e'), position: 'relative' }}>
-                <div style={{ color: '#555', fontSize: '0.75rem', marginBottom: 4 }}>{e.date}</div>
+                <div style={{ color: c.textSec, fontSize: '0.75rem', marginBottom: 4 }}>{e.date}</div>
                 <p style={{ margin: 0, lineHeight: 1.5 }}>{e.text}</p>
-                <button style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
+                <button style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
               </div>
             ))}
           </>
@@ -1116,32 +1133,32 @@ export default function App() {
 
         {taskEntries.length > 0 && (
           <>
-            <h2 style={{ fontSize: '1.1rem', color: '#888', margin: '1.5rem 0 0.5rem' }}>Записи по заданиям</h2>
+            <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.5rem' }}>Записи по заданиям</h2>
             {[...taskEntries].reverse().map(e => (
               <div key={e.id} style={{ ...S.card('#1a2040'), position: 'relative' }}>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 4, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <span style={S.tag('#69a8ff')}>День {e.day}</span>
+                  <span style={S.tag('c.accent')}>День {e.day}</span>
                   <span style={S.tag(e.taskIdx === 0 ? '#2d5a9e' : e.taskIdx === 1 ? '#5a3a8a' : '#3a5a3a')}>
                     {e.taskIdx === 0 ? '🔵 Практика' : e.taskIdx === 1 ? '👁 Наблюдение' : '✍️ Рефлексия'}
                   </span>
-                  <span style={{ color: '#555', fontSize: '0.75rem' }}>{e.date}</span>
+                  <span style={{ color: c.textSec, fontSize: '0.75rem' }}>{e.date}</span>
                 </div>
                 <p style={{ margin: 0, lineHeight: 1.5 }}>{e.text}</p>
-                <button style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
+                <button style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
               </div>
             ))}
           </>
         )}
 
         {userState.journalEntries.length === 0 && (
-          <p style={{ color: '#444', textAlign: 'center', marginTop: '2rem' }}>Пока пусто — начни писать!</p>
+          <p style={{ color: c.textSec, textAlign: 'center', marginTop: '2rem' }}>Пока пусто — начни писать!</p>
         )}
 
         <button style={{ ...S.btn('#222'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
 
         <div style={{ marginTop: '2rem', borderTop: '1px solid #1e1e1e', paddingTop: '1.5rem' }}>
           {!resetConfirm ? (
-            <button style={{ ...S.btn('#1a1a1a'), color: '#555', border: '1px solid #2a2a2a' }} onClick={() => setResetConfirm(true)}>
+            <button style={{ ...S.btn('#1a1a1a'), color: c.textSec, border: '1px solid #2a2a2a' }} onClick={() => setResetConfirm(true)}>
               🗑 Сбросить весь прогресс
             </button>
           ) : (
@@ -1212,32 +1229,34 @@ export default function App() {
     const maxDayIdx = byDayOfWeek.indexOf(Math.max(...byDayOfWeek));
     const bestDay = byDayOfWeek[maxDayIdx] > 0 ? dayNames[maxDayIdx] : '—';
 
+    const c = getColors(userState.theme === 'dark');
+
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Статистика</h1>
         </div>
 
         {/* Ключевые цифры — 2×2 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem', marginBottom: '1rem' }}>
           {[
-            { emoji: '✅', value: totalDays, label: 'дней выполнено', color: '#4caf50' },
-            { emoji: '📝', value: totalEntries, label: 'записей всего', color: '#69a8ff' },
+            { emoji: '✅', value: totalDays, label: 'дней выполнено', color: 'c.success' },
+            { emoji: '📝', value: totalEntries, label: 'записей всего', color: c.accent },
             { emoji: '🔥', value: userState.maxStreak, label: 'рекорд стрика', color: '#ff8c42' },
             { emoji: '🏅', value: unlocked, label: `ачивок из ${ACHIEVEMENTS.length}`, color: '#a855f7' },
           ].map(({ emoji, value, label, color }) => (
-            <div key={label} style={{ background: '#1a1a1a', borderRadius: '14px', padding: '1rem', textAlign: 'center', border: `1px solid ${color}22` }}>
+            <div key={label} style={{ background: c.card, borderRadius: '14px', padding: '1rem', textAlign: 'center', border: `1px solid ${color}22` }}>
               <div style={{ fontSize: '1.6rem', marginBottom: 4 }}>{emoji}</div>
               <div style={{ fontSize: '2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</div>
-              <div style={{ fontSize: '0.72rem', color: '#666', marginTop: 4 }}>{label}</div>
+              <div style={{ fontSize: '0.72rem', color: c.textSec, marginTop: 4 }}>{label}</div>
             </div>
           ))}
         </div>
 
         {/* Доп. метрики */}
         <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-          <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: '#888', letterSpacing: '0.05em' }}>ДЕТАЛИ</p>
+          <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: c.textSec, letterSpacing: '0.05em' }}>ДЕТАЛИ</p>
           {[
             { label: '📖 Слов написано', value: totalWords.toLocaleString('ru-RU') },
             { label: '✍️ Средняя длина записи', value: `${avgWords} слов` },
@@ -1247,8 +1266,8 @@ export default function App() {
             { label: '📈 Прогресс плана', value: `${Math.round((totalDays / 90) * 100)}%` },
           ].map(({ label, value }) => (
             <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #222' }}>
-              <span style={{ fontSize: '0.9rem', color: '#aaa' }}>{label}</span>
-              <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>{value}</span>
+              <span style={{ fontSize: '0.9rem', color: c.textSec }}>{label}</span>
+              <span style={{ fontSize: '0.95rem', fontWeight: 700, color: c.text }}>{value}</span>
             </div>
           ))}
         </div>
@@ -1256,7 +1275,7 @@ export default function App() {
         {/* Распределение по типам */}
         {taskEntries.length > 0 && (
           <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-            <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: '#888', letterSpacing: '0.05em' }}>ТИП ЗАПИСЕЙ</p>
+            <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: c.textSec, letterSpacing: '0.05em' }}>ТИП ЗАПИСЕЙ</p>
             {[
               { label: '🔵 Практика', count: practiceCount, color: '#2d5a9e' },
               { label: '👁 Наблюдение', count: observeCount, color: '#5a3a8a' },
@@ -1266,10 +1285,10 @@ export default function App() {
               return (
                 <div key={label} style={{ marginBottom: '0.7rem' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: '0.85rem', color: '#aaa' }}>{label}</span>
-                    <span style={{ fontSize: '0.85rem', color: '#666' }}>{count} · {pct}%</span>
+                    <span style={{ fontSize: '0.85rem', color: c.textSec }}>{label}</span>
+                    <span style={{ fontSize: '0.85rem', color: c.textSec }}>{count} · {pct}%</span>
                   </div>
-                  <div style={{ background: '#222', borderRadius: 4, height: 6 }}>
+                  <div style={{ background: c.card, borderRadius: 4, height: 6 }}>
                     <div style={{ background: color, width: `${pct}%`, height: 6, borderRadius: 4, minWidth: count > 0 ? 6 : 0 }} />
                   </div>
                 </div>
@@ -1281,12 +1300,12 @@ export default function App() {
         {/* График активности по неделям */}
         {totalEntries > 0 && (
           <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-            <p style={{ margin: '0 0 1rem', fontWeight: 700, fontSize: '0.9rem', color: '#888', letterSpacing: '0.05em' }}>АКТИВНОСТЬ ПО НЕДЕЛЯМ</p>
+            <p style={{ margin: '0 0 1rem', fontWeight: 700, fontSize: '0.9rem', color: c.textSec, letterSpacing: '0.05em' }}>АКТИВНОСТЬ ПО НЕДЕЛЯМ</p>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '80px' }}>
               {weeklyData.map(({ week, count }) => (
                 <div key={week} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                  <div style={{ width: '100%', background: count > 0 ? '#69a8ff' : '#222', borderRadius: '3px 3px 0 0', height: `${Math.round((count / maxWeekCount) * 64) + (count > 0 ? 4 : 0)}px`, minHeight: count > 0 ? 8 : 4, transition: 'height 0.3s' }} />
-                  <span style={{ fontSize: '0.55rem', color: '#444', whiteSpace: 'nowrap' }}>{week}</span>
+                  <div style={{ width: '100%', background: count > 0 ? 'c.accent' : '#222', borderRadius: '3px 3px 0 0', height: `${Math.round((count / maxWeekCount) * 64) + (count > 0 ? 4 : 0)}px`, minHeight: count > 0 ? 8 : 4, transition: 'height 0.3s' }} />
+                  <span style={{ fontSize: '0.55rem', color: c.textSec, whiteSpace: 'nowrap' }}>{week}</span>
                 </div>
               ))}
             </div>
@@ -1294,7 +1313,7 @@ export default function App() {
         )}
 
         {totalEntries === 0 && (
-          <div style={{ textAlign: 'center', padding: '2rem 0', color: '#444' }}>
+          <div style={{ textAlign: 'center', padding: '2rem 0', color: c.textSec }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📊</div>
             <p style={{ margin: 0 }}>Пока данных нет — начни выполнять задания!</p>
           </div>
@@ -1364,13 +1383,15 @@ export default function App() {
       updateState({ weeklyGoals: userState.weeklyGoals.filter(g => g.id !== id) });
     }
 
-    const priorityColors = { high: '#ff4444', medium: '#ff9800', low: '#4caf50' };
+    const priorityColors = { high: '#ff4444', medium: '#ff9800', low: 'c.success' };
     const priorityLabels = { high: '🔴 Важно', medium: '🟡 Средне', low: '🟢 Низко' };
+
+    const c = getColors(userState.theme === 'dark');
 
     return (
       <div style={S.page}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
-          <button style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
+          <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Планирование</h1>
         </div>
 
@@ -1381,7 +1402,7 @@ export default function App() {
             style={{
               flex: 1,
               background: plannerTab === 'day' ? '#2d5a9e' : '#1a1a1a',
-              color: '#fff',
+              color: c.text,
               border: 'none',
               padding: '0.8rem',
               borderRadius: '12px',
@@ -1396,7 +1417,7 @@ export default function App() {
             style={{
               flex: 1,
               background: plannerTab === 'week' ? '#2d5a9e' : '#1a1a1a',
-              color: '#fff',
+              color: c.text,
               border: 'none',
               padding: '0.8rem',
               borderRadius: '12px',
@@ -1413,16 +1434,16 @@ export default function App() {
           <>
             {/* Интеграция с 90-дневным планом */}
             {dayData && (
-              <div style={{ ...S.card('#1a2040'), marginBottom: '1rem', borderLeft: '3px solid #69a8ff' }}>
+              <div style={{ ...S.card('#1a2040'), marginBottom: '1rem', borderLeft: '3px solid c.accent' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={S.tag('#69a8ff')}>День {userState.currentDay} · {dayData.theme}</span>
+                  <span style={S.tag('c.accent')}>День {userState.currentDay} · {dayData.theme}</span>
                   <button
                     onClick={() => setScreen('day-detail')}
-                    style={{ background: 'none', border: 'none', color: '#69a8ff', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
+                    style={{ background: 'none', border: 'none', color: c.accent, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
                     Открыть →
                   </button>
                 </div>
-                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: '#aaa' }}>
+                <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: c.textSec }}>
                   3 задания по плану: {planTasks.map((_, i) => isTaskDone(userState.journalEntries, userState.currentDay, i) ? '✓' : '○').join(' ')}
                 </p>
               </div>
@@ -1432,34 +1453,34 @@ export default function App() {
             {todayTasks.length > 0 && (
               <div style={{ ...S.card('#1a1a2a'), marginBottom: '1rem', textAlign: 'center' }}>
                 <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem' }}>
-                  {doneTasks} <span style={{ color: '#666', fontWeight: 400 }}>из</span> {todayTasks.length}
+                  {doneTasks} <span style={{ color: c.textSec, fontWeight: 400 }}>из</span> {todayTasks.length}
                 </p>
-                <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
-                  <div style={{ background: '#4caf50', width: `${Math.round((doneTasks / todayTasks.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneTasks > 0 ? 8 : 0 }} />
+                <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
+                  <div style={{ background: 'c.success', width: `${Math.round((doneTasks / todayTasks.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneTasks > 0 ? 8 : 0 }} />
                 </div>
               </div>
             )}
 
             {/* Добавить задачу */}
             <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-              <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: '#888' }}>НОВАЯ ЗАДАЧА</p>
+              <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: c.textSec }}>НОВАЯ ЗАДАЧА</p>
               <input
                 value={taskDraftPlanner}
                 onChange={e => setTaskDraftPlanner(e.target.value)}
                 placeholder="Что нужно сделать?"
-                style={{ width: '100%', padding: '0.8rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '0.8rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
               />
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.8rem' }}>
                 <input
                   type="time"
                   value={taskTime}
                   onChange={e => setTaskTime(e.target.value)}
-                  style={{ flex: 1, padding: '0.7rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', fontSize: '0.9rem' }}
+                  style={{ flex: 1, padding: '0.7rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}
                 />
                 <select
                   value={taskPriority}
                   onChange={e => setTaskPriority(e.target.value as any)}
-                  style={{ flex: 1, padding: '0.7rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', fontSize: '0.9rem' }}>
+                  style={{ flex: 1, padding: '0.7rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}>
                   <option value="high">🔴 Важно</option>
                   <option value="medium">🟡 Средне</option>
                   <option value="low">🟢 Низко</option>
@@ -1468,7 +1489,7 @@ export default function App() {
               <button
                 onClick={addDailyTask}
                 disabled={!taskDraftPlanner.trim()}
-                style={{ ...S.btn(taskDraftPlanner.trim() ? '#4caf50' : '#333'), marginBottom: 0, opacity: taskDraftPlanner.trim() ? 1 : 0.5, cursor: taskDraftPlanner.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
+                style={{ ...S.btn(taskDraftPlanner.trim() ? 'c.success' : '#333'), marginBottom: 0, opacity: taskDraftPlanner.trim() ? 1 : 0.5, cursor: taskDraftPlanner.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
                 ✚ Добавить задачу
               </button>
             </div>
@@ -1495,14 +1516,14 @@ export default function App() {
                     </div>
                     <button
                       onClick={() => deleteTask(task.id)}
-                      style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '1rem', flexShrink: 0 }}>
+                      style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1rem', flexShrink: 0 }}>
                       ✕
                     </button>
                   </div>
                 </div>
               ))
             ) : (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#444' }}>
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: c.textSec }}>
                 <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📋</div>
                 <p style={{ margin: 0 }}>Добавь задачи на сегодня</p>
               </div>
@@ -1517,27 +1538,27 @@ export default function App() {
             {weekGoals.length > 0 && (
               <div style={{ ...S.card('#1a1a2a'), marginBottom: '1rem', textAlign: 'center' }}>
                 <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem' }}>
-                  {doneGoals} <span style={{ color: '#666', fontWeight: 400 }}>из</span> {weekGoals.length}
+                  {doneGoals} <span style={{ color: c.textSec, fontWeight: 400 }}>из</span> {weekGoals.length}
                 </p>
-                <div style={{ background: '#111', borderRadius: 8, height: 8 }}>
-                  <div style={{ background: '#69a8ff', width: `${Math.round((doneGoals / weekGoals.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneGoals > 0 ? 8 : 0 }} />
+                <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
+                  <div style={{ background: c.accent, width: `${Math.round((doneGoals / weekGoals.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneGoals > 0 ? 8 : 0 }} />
                 </div>
               </div>
             )}
 
             {/* Добавить цель */}
             <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-              <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: '#888' }}>НОВАЯ ЦЕЛЬ НА НЕДЕЛЮ</p>
+              <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: c.textSec }}>НОВАЯ ЦЕЛЬ НА НЕДЕЛЮ</p>
               <input
                 value={weekGoalDraft}
                 onChange={e => setWeekGoalDraft(e.target.value)}
                 placeholder="Что хочу достичь на этой неделе?"
-                style={{ width: '100%', padding: '0.8rem', background: '#0f0f0f', color: '#fff', border: '1px solid #333', borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '0.8rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
               />
               <button
                 onClick={addWeekGoal}
                 disabled={!weekGoalDraft.trim()}
-                style={{ ...S.btn(weekGoalDraft.trim() ? '#69a8ff' : '#333'), marginBottom: 0, opacity: weekGoalDraft.trim() ? 1 : 0.5, cursor: weekGoalDraft.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
+                style={{ ...S.btn(weekGoalDraft.trim() ? 'c.accent' : '#333'), marginBottom: 0, opacity: weekGoalDraft.trim() ? 1 : 0.5, cursor: weekGoalDraft.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
                 ✚ Добавить цель
               </button>
             </div>
@@ -1560,14 +1581,14 @@ export default function App() {
                     </div>
                     <button
                       onClick={() => deleteGoal(goal.id)}
-                      style={{ background: 'none', border: 'none', color: '#444', cursor: 'pointer', fontSize: '1rem', flexShrink: 0 }}>
+                      style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1rem', flexShrink: 0 }}>
                       ✕
                     </button>
                   </div>
                 </div>
               ))
             ) : (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: '#444' }}>
+              <div style={{ textAlign: 'center', padding: '2rem 0', color: c.textSec }}>
                 <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📅</div>
                 <p style={{ margin: 0 }}>Поставь цели на неделю</p>
               </div>
