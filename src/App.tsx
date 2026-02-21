@@ -631,7 +631,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', transition: 'background 0.3s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', transition: 'background 0.3s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         {/* Theme toggle */}
         <button
           onClick={() => updateState({ theme: userState.theme === 'light' ? 'dark' : 'light' })}
@@ -731,7 +731,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
     
     return (
-      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ width: '100%', maxWidth: 400, marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: c.textSec, marginBottom: 8, fontWeight: 500 }}>
             <span>Вопрос {testStep + 1} из {questions.length}</span><span>{progress}%</span>
@@ -759,7 +759,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
     
     return (
-      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Результат теста</h1>
         <div style={{ fontSize: '4.5rem', fontWeight: 800, color: c.accent, margin: '0.5rem 0', letterSpacing: '-0.03em' }}>{userState.testScore}</div>
         <p style={{ fontSize: '0.9rem', color: c.textSec, marginBottom: '0.5rem', fontWeight: 500 }}>баллов из 24</p>
@@ -782,7 +782,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
         <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{motivationMsg.emoji}</div>
         <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: '20px', padding: '2rem 1.5rem', maxWidth: 360, width: '100%', marginBottom: '1.2rem', boxShadow: userState.theme === 'light' ? '0 4px 16px rgba(0,0,0,0.1)' : '0 4px 16px rgba(0,0,0,0.5)' }}>
           <div style={{ display: 'inline-block', background: `${c.accent}15`, border: `1px solid ${c.accent}40`, borderRadius: '10px', padding: '4px 12px', fontSize: '0.75rem', color: c.accent, fontWeight: 700, marginBottom: '0.8rem', letterSpacing: '0.05em' }}>ДЕНЬ {completedDayNum} ЗАКРЫТ ✓</div>
@@ -838,7 +838,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Ачивки</h1>
@@ -888,7 +888,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>90-дневный план</h1>
@@ -954,7 +954,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('plan')}>←</button>
           <h2 style={{ margin: 0, fontSize: '1.2rem' }}>День {activeDay}</h2>
@@ -1054,7 +1054,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('day-detail')}>←</button>
           <h2 style={{ margin: 0, fontSize: '1.1rem' }}>День {activeDay} · {taskLabels[activeTaskIdx]}</h2>
@@ -1104,7 +1104,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Журнал записей</h1>
@@ -1179,6 +1179,7 @@ export default function App() {
   // STATS
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'stats') {
+    const c = getColors(userState.theme === 'dark');
     const totalDays = userState.completedDays.length;
     const totalEntries = userState.journalEntries.length;
     const taskEntries = userState.journalEntries.filter(e => e.day !== undefined);
@@ -1229,10 +1230,9 @@ export default function App() {
     const maxDayIdx = byDayOfWeek.indexOf(Math.max(...byDayOfWeek));
     const bestDay = byDayOfWeek[maxDayIdx] > 0 ? dayNames[maxDayIdx] : '—';
 
-    const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Статистика</h1>
@@ -1387,9 +1387,8 @@ export default function App() {
     const priorityLabels = { high: '🔴 Важно', medium: '🟡 Средне', low: '🟢 Низко' };
 
     const c = getColors(userState.theme === 'dark');
-
     return (
-      <div style={S.page}>
+      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Планирование</h1>
