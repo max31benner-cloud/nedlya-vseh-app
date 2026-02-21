@@ -1255,6 +1255,7 @@ export default function App() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════════════════
   // STATS
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'stats') {
@@ -1274,7 +1275,6 @@ export default function App() {
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 6);
       const label = `${weekStart.getDate()}.${String(weekStart.getMonth() + 1).padStart(2, '0')}`;
-      // Считаем записи за эту неделю
       const count = userState.journalEntries.filter(e => {
         const parts = e.date.split(', ');
         if (!parts[0]) return false;
@@ -1292,7 +1292,6 @@ export default function App() {
     const observeCount  = taskEntries.filter(e => e.taskIdx === 1).length;
     const reflectCount  = taskEntries.filter(e => e.taskIdx === 2).length;
 
-    // Средняя длина записи
     const avgWords = totalEntries > 0 ? Math.round(totalWords / totalEntries) : 0;
 
     // Самый продуктивный день недели
@@ -1309,33 +1308,39 @@ export default function App() {
     const maxDayIdx = byDayOfWeek.indexOf(Math.max(...byDayOfWeek));
     const bestDay = byDayOfWeek[maxDayIdx] > 0 ? dayNames[maxDayIdx] : '—';
 
-
     return (
       <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Статистика</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Статистика</h1>
         </div>
 
-        {/* Ключевые цифры — 2×2 */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.7rem', marginBottom: '1rem' }}>
+        {/* Ключевые цифры — 2×2 grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '1rem' }}>
           {[
-            { emoji: '✅', value: totalDays, label: 'дней выполнено', color: 'c.success' },
+            { emoji: '✅', value: totalDays, label: 'дней выполнено', color: c.success },
             { emoji: '📝', value: totalEntries, label: 'записей всего', color: c.accent },
             { emoji: '🔥', value: userState.maxStreak, label: 'рекорд стрика', color: '#ff8c42' },
             { emoji: '🏅', value: unlocked, label: `ачивок из ${ACHIEVEMENTS.length}`, color: '#a855f7' },
           ].map(({ emoji, value, label, color }) => (
-            <div key={label} style={{ background: c.card, borderRadius: '14px', padding: '1rem', textAlign: 'center', border: `1px solid ${color}22` }}>
-              <div style={{ fontSize: '1.6rem', marginBottom: 4 }}>{emoji}</div>
-              <div style={{ fontSize: '2rem', fontWeight: 800, color, lineHeight: 1 }}>{value}</div>
-              <div style={{ fontSize: '0.72rem', color: c.textSec, marginTop: 4 }}>{label}</div>
+            <div key={label} style={{ 
+              background: c.card, 
+              borderRadius: '16px', 
+              padding: '1.1rem 1rem', 
+              textAlign: 'center', 
+              border: `1px solid ${c.border}`,
+              boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)',
+            }}>
+              <div style={{ fontSize: '1.8rem', marginBottom: 6 }}>{emoji}</div>
+              <div style={{ fontSize: '2.2rem', fontWeight: 800, color, lineHeight: 1, letterSpacing: '-0.02em' }}>{value}</div>
+              <div style={{ fontSize: '0.7rem', color: c.textSec, marginTop: 6, fontWeight: 500 }}>{label}</div>
             </div>
           ))}
         </div>
 
-        {/* Доп. метрики */}
-        <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-          <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: c.textSec, letterSpacing: '0.05em' }}>ДЕТАЛИ</p>
+        {/* Детали */}
+        <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+          <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.75rem', color: c.textSec, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Детали</p>
           {[
             { label: '📖 Слов написано', value: totalWords.toLocaleString('ru-RU') },
             { label: '✍️ Средняя длина записи', value: `${avgWords} слов` },
@@ -1343,32 +1348,38 @@ export default function App() {
             { label: '📓 Свободных записей', value: freeEntries.length },
             { label: '🎯 Записей по заданиям', value: taskEntries.length },
             { label: '📈 Прогресс плана', value: `${Math.round((totalDays / 90) * 100)}%` },
-          ].map(({ label, value }) => (
-            <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem 0', borderBottom: '1px solid #222' }}>
-              <span style={{ fontSize: '0.9rem', color: c.textSec }}>{label}</span>
-              <span style={{ fontSize: '0.95rem', fontWeight: 700, color: c.text }}>{value}</span>
+          ].map(({ label, value }, idx, arr) => (
+            <div key={label} style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              padding: '0.7rem 0', 
+              borderBottom: idx < arr.length - 1 ? `1px solid ${c.border}` : 'none' 
+            }}>
+              <span style={{ fontSize: '0.9rem', color: c.text, fontWeight: 500 }}>{label}</span>
+              <span style={{ fontSize: '1rem', fontWeight: 700, color: c.text }}>{value}</span>
             </div>
           ))}
         </div>
 
         {/* Распределение по типам */}
         {taskEntries.length > 0 && (
-          <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-            <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.9rem', color: c.textSec, letterSpacing: '0.05em' }}>ТИП ЗАПИСЕЙ</p>
+          <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+            <p style={{ margin: '0 0 0.8rem', fontWeight: 700, fontSize: '0.75rem', color: c.textSec, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Тип записей</p>
             {[
-              { label: '🔵 Практика', count: practiceCount, color: '#2d5a9e' },
-              { label: '👁 Наблюдение', count: observeCount, color: '#5a3a8a' },
-              { label: '✍️ Рефлексия', count: reflectCount, color: '#3a5a3a' },
+              { label: '🔵 Практика', count: practiceCount, color: c.accent },
+              { label: '👁 Наблюдение', count: observeCount, color: '#a78bfa' },
+              { label: '✍️ Рефлексия', count: reflectCount, color: c.success },
             ].map(({ label, count, color }) => {
               const pct = taskEntries.length > 0 ? Math.round((count / taskEntries.length) * 100) : 0;
               return (
-                <div key={label} style={{ marginBottom: '0.7rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <span style={{ fontSize: '0.85rem', color: c.textSec }}>{label}</span>
-                    <span style={{ fontSize: '0.85rem', color: c.textSec }}>{count} · {pct}%</span>
+                <div key={label} style={{ marginBottom: '0.8rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <span style={{ fontSize: '0.85rem', color: c.text, fontWeight: 500 }}>{label}</span>
+                    <span style={{ fontSize: '0.85rem', color: c.textSec, fontWeight: 600 }}>{count} · {pct}%</span>
                   </div>
-                  <div style={{ background: c.card, borderRadius: 4, height: 6 }}>
-                    <div style={{ background: color, width: `${pct}%`, height: 6, borderRadius: 4, minWidth: count > 0 ? 6 : 0 }} />
+                  <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 6, height: 6 }}>
+                    <div style={{ background: color, width: `${pct}%`, height: 6, borderRadius: 6, minWidth: count > 0 ? 6 : 0, transition: 'width 0.3s ease' }} />
                   </div>
                 </div>
               );
@@ -1378,13 +1389,21 @@ export default function App() {
 
         {/* График активности по неделям */}
         {totalEntries > 0 && (
-          <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
-            <p style={{ margin: '0 0 1rem', fontWeight: 700, fontSize: '0.9rem', color: c.textSec, letterSpacing: '0.05em' }}>АКТИВНОСТЬ ПО НЕДЕЛЯМ</p>
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '4px', height: '80px' }}>
+          <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+            <p style={{ margin: '0 0 1rem', fontWeight: 700, fontSize: '0.75rem', color: c.textSec, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Активность по неделям</p>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', height: '90px' }}>
               {weeklyData.map(({ week, count }) => (
-                <div key={week} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                  <div style={{ width: '100%', background: count > 0 ? 'c.accent' : '#222', borderRadius: '3px 3px 0 0', height: `${Math.round((count / maxWeekCount) * 64) + (count > 0 ? 4 : 0)}px`, minHeight: count > 0 ? 8 : 4, transition: 'height 0.3s' }} />
-                  <span style={{ fontSize: '0.55rem', color: c.textSec, whiteSpace: 'nowrap' }}>{week}</span>
+                <div key={week} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                  <div style={{ 
+                    width: '100%', 
+                    background: count > 0 ? c.accent : (userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e'), 
+                    borderRadius: '4px 4px 0 0', 
+                    height: `${Math.round((count / maxWeekCount) * 70) + (count > 0 ? 6 : 0)}px`, 
+                    minHeight: count > 0 ? 10 : 6, 
+                    transition: 'all 0.3s ease',
+                    opacity: count > 0 ? 1 : 0.4
+                  }} />
+                  <span style={{ fontSize: '0.6rem', color: c.textSec, whiteSpace: 'nowrap', fontWeight: 500 }}>{week}</span>
                 </div>
               ))}
             </div>
@@ -1392,13 +1411,14 @@ export default function App() {
         )}
 
         {totalEntries === 0 && (
-          <div style={{ textAlign: 'center', padding: '2rem 0', color: c.textSec }}>
-            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📊</div>
-            <p style={{ margin: 0 }}>Пока данных нет — начни выполнять задания!</p>
+          <div style={{ textAlign: 'center', padding: '3rem 0', color: c.textSec }}>
+            <div style={{ fontSize: '3.5rem', marginBottom: '0.8rem' }}>📊</div>
+            <p style={{ margin: 0, fontSize: '1rem', fontWeight: 500 }}>Пока данных нет</p>
+            <p style={{ margin: '0.5rem 0 0', fontSize: '0.9rem' }}>Начни выполнять задания!</p>
           </div>
         )}
 
-        <button style={{ ...S.btn('#333'), marginTop: '0.5rem' }} onClick={() => setScreen('home')}>На главную</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginTop: '0.5rem', fontWeight: 600 }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
