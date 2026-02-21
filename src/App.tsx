@@ -1390,15 +1390,16 @@ export default function App() {
   }
 
   // ════════════════════════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════════════════════
   // PLANNER
   // ════════════════════════════════════════════════════════════════════════════
   if (screen === 'planner') {
+    const c = getColors(userState.theme === 'dark');
     const todayTasks = userState.dailyTasks;
     const doneTasks = todayTasks.filter(t => t.done).length;
     const weekGoals = userState.weeklyGoals;
     const doneGoals = weekGoals.filter(g => g.done).length;
 
-    // Интеграция с 90-дневным планом
     const dayData = dailyPlan[userState.currentDay - 1];
     const planTasks = dayData ? dayData.tasks : [];
 
@@ -1448,15 +1449,18 @@ export default function App() {
       updateState({ weeklyGoals: userState.weeklyGoals.filter(g => g.id !== id) });
     }
 
-    const priorityColors = { high: '#ff4444', medium: '#ff9800', low: 'c.success' };
+    const priorityColors = { 
+      high: userState.theme === 'light' ? '#ff3b30' : '#ff4444', 
+      medium: userState.theme === 'light' ? '#ff9500' : '#ff9800', 
+      low: c.success 
+    };
     const priorityLabels = { high: '🔴 Важно', medium: '🟡 Средне', low: '🟢 Низко' };
 
-    const c = getColors(userState.theme === 'dark');
     return (
       <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Планирование</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Планирование</h1>
         </div>
 
         {/* Табы */}
@@ -1465,14 +1469,15 @@ export default function App() {
             onClick={() => setPlannerTab('day')}
             style={{
               flex: 1,
-              background: plannerTab === 'day' ? '#2d5a9e' : '#1a1a1a',
-              color: c.text,
-              border: 'none',
+              background: plannerTab === 'day' ? c.accent : c.buttonSecondaryBg,
+              color: plannerTab === 'day' ? '#fff' : c.text,
+              border: `1px solid ${plannerTab === 'day' ? c.accent : c.border}`,
               padding: '0.8rem',
               borderRadius: '12px',
               cursor: 'pointer',
               fontWeight: 700,
               fontSize: '0.95rem',
+              transition: 'all 0.2s ease',
             }}>
             📋 День
           </button>
@@ -1480,14 +1485,15 @@ export default function App() {
             onClick={() => setPlannerTab('week')}
             style={{
               flex: 1,
-              background: plannerTab === 'week' ? '#2d5a9e' : '#1a1a1a',
-              color: c.text,
-              border: 'none',
+              background: plannerTab === 'week' ? c.accent : c.buttonSecondaryBg,
+              color: plannerTab === 'week' ? '#fff' : c.text,
+              border: `1px solid ${plannerTab === 'week' ? c.accent : c.border}`,
               padding: '0.8rem',
               borderRadius: '12px',
               cursor: 'pointer',
               fontWeight: 700,
               fontSize: '0.95rem',
+              transition: 'all 0.2s ease',
             }}>
             📅 Неделя
           </button>
@@ -1498,9 +1504,9 @@ export default function App() {
           <>
             {/* Интеграция с 90-дневным планом */}
             {dayData && (
-              <div style={{ ...S.card('#1a2040'), marginBottom: '1rem', borderLeft: '3px solid c.accent' }}>
+              <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1rem', borderLeft: `3px solid ${c.accent}`, border: `1px solid ${c.border}`, borderLeftWidth: '3px', borderLeftColor: c.accent, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={S.tag('c.accent')}>День {userState.currentDay} · {dayData.theme}</span>
+                  <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.75rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>День {userState.currentDay} · {dayData.theme}</span>
                   <button
                     onClick={() => setScreen('day-detail')}
                     style={{ background: 'none', border: 'none', color: c.accent, cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>
@@ -1515,36 +1521,36 @@ export default function App() {
 
             {/* Прогресс дня */}
             {todayTasks.length > 0 && (
-              <div style={{ ...S.card('#1a1a2a'), marginBottom: '1rem', textAlign: 'center' }}>
-                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem' }}>
+              <div style={{ background: c.card, padding: '1rem', borderRadius: '16px', marginBottom: '1rem', textAlign: 'center', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem', color: c.text }}>
                   {doneTasks} <span style={{ color: c.textSec, fontWeight: 400 }}>из</span> {todayTasks.length}
                 </p>
-                <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
-                  <div style={{ background: 'c.success', width: `${Math.round((doneTasks / todayTasks.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneTasks > 0 ? 8 : 0 }} />
+                <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 8, height: 8 }}>
+                  <div style={{ background: c.success, width: `${Math.round((doneTasks / todayTasks.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneTasks > 0 ? 8 : 0 }} />
                 </div>
               </div>
             )}
 
             {/* Добавить задачу */}
-            <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+            <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
               <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: c.textSec }}>НОВАЯ ЗАДАЧА</p>
               <input
                 value={taskDraftPlanner}
                 onChange={e => setTaskDraftPlanner(e.target.value)}
                 placeholder="Что нужно сделать?"
-                style={{ width: '100%', padding: '0.8rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '0.8rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
               />
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.8rem' }}>
                 <input
                   type="time"
                   value={taskTime}
                   onChange={e => setTaskTime(e.target.value)}
-                  style={{ flex: 1, padding: '0.7rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}
+                  style={{ flex: 1, padding: '0.7rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}
                 />
                 <select
                   value={taskPriority}
                   onChange={e => setTaskPriority(e.target.value as any)}
-                  style={{ flex: 1, padding: '0.7rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}>
+                  style={{ flex: 1, padding: '0.7rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', fontSize: '0.9rem' }}>
                   <option value="high">🔴 Важно</option>
                   <option value="medium">🟡 Средне</option>
                   <option value="low">🟢 Низко</option>
@@ -1553,7 +1559,7 @@ export default function App() {
               <button
                 onClick={addDailyTask}
                 disabled={!taskDraftPlanner.trim()}
-                style={{ ...S.btn(taskDraftPlanner.trim() ? 'c.success' : '#333'), marginBottom: 0, opacity: taskDraftPlanner.trim() ? 1 : 0.5, cursor: taskDraftPlanner.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
+                style={{ background: taskDraftPlanner.trim() ? c.success : c.buttonSecondaryBg, color: taskDraftPlanner.trim() ? '#fff' : c.text, border: 'none', padding: '0.8rem', fontSize: '0.9rem', borderRadius: '12px', cursor: taskDraftPlanner.trim() ? 'pointer' : 'not-allowed', width: '100%', marginBottom: 0, fontWeight: 600, opacity: taskDraftPlanner.trim() ? 1 : 0.5 }}>
                 ✚ Добавить задачу
               </button>
             </div>
@@ -1561,7 +1567,7 @@ export default function App() {
             {/* Список задач */}
             {todayTasks.length > 0 ? (
               todayTasks.map(task => (
-                <div key={task.id} style={{ ...S.card(task.done ? '#1a2e1a' : '#1e1e1e'), marginBottom: '0.6rem', border: `1px solid ${task.done ? '#2a4a2a' : priorityColors[task.priority]}44` }}>
+                <div key={task.id} style={{ background: task.done ? (userState.theme === 'light' ? '#f0fdf4' : '#1a2e1a') : c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.6rem', border: `1px solid ${task.done ? (userState.theme === 'light' ? '#86efac' : '#2a4a2a') : priorityColors[task.priority]}44`, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem' }}>
                     <input
                       type="checkbox"
@@ -1571,10 +1577,10 @@ export default function App() {
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', gap: 6, marginBottom: 4, flexWrap: 'wrap' }}>
-                        {task.time && <span style={S.tag('#2d5a9e')}>{task.time}</span>}
-                        <span style={S.tag(priorityColors[task.priority])}>{priorityLabels[task.priority]}</span>
+                        {task.time && <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>{task.time}</span>}
+                        <span style={{ display: 'inline-block', background: `${priorityColors[task.priority]}15`, color: priorityColors[task.priority], fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${priorityColors[task.priority]}30` }}>{priorityLabels[task.priority]}</span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '0.95rem', textDecoration: task.done ? 'line-through' : 'none', color: task.done ? '#666' : '#eee' }}>
+                      <p style={{ margin: 0, fontSize: '0.95rem', textDecoration: task.done ? 'line-through' : 'none', color: task.done ? c.textSec : c.text }}>
                         {task.text}
                       </p>
                     </div>
@@ -1600,29 +1606,29 @@ export default function App() {
           <>
             {/* Прогресс недели */}
             {weekGoals.length > 0 && (
-              <div style={{ ...S.card('#1a1a2a'), marginBottom: '1rem', textAlign: 'center' }}>
-                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem' }}>
+              <div style={{ background: c.card, padding: '1rem', borderRadius: '16px', marginBottom: '1rem', textAlign: 'center', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+                <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1rem', color: c.text }}>
                   {doneGoals} <span style={{ color: c.textSec, fontWeight: 400 }}>из</span> {weekGoals.length}
                 </p>
-                <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
+                <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 8, height: 8 }}>
                   <div style={{ background: c.accent, width: `${Math.round((doneGoals / weekGoals.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.3s', minWidth: doneGoals > 0 ? 8 : 0 }} />
                 </div>
               </div>
             )}
 
             {/* Добавить цель */}
-            <div style={{ ...S.card('#1a1a1a'), marginBottom: '1rem' }}>
+            <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
               <p style={{ margin: '0 0 8px', fontSize: '0.9rem', fontWeight: 700, color: c.textSec }}>НОВАЯ ЦЕЛЬ НА НЕДЕЛЮ</p>
               <input
                 value={weekGoalDraft}
                 onChange={e => setWeekGoalDraft(e.target.value)}
                 placeholder="Что хочу достичь на этой неделе?"
-                style={{ width: '100%', padding: '0.8rem', background: c.bg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '0.8rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '10px', marginBottom: '0.8rem', fontSize: '0.95rem', boxSizing: 'border-box' }}
               />
               <button
                 onClick={addWeekGoal}
                 disabled={!weekGoalDraft.trim()}
-                style={{ ...S.btn(weekGoalDraft.trim() ? 'c.accent' : '#333'), marginBottom: 0, opacity: weekGoalDraft.trim() ? 1 : 0.5, cursor: weekGoalDraft.trim() ? 'pointer' : 'not-allowed', fontSize: '0.9rem', padding: '0.7rem' }}>
+                style={{ background: weekGoalDraft.trim() ? c.accent : c.buttonSecondaryBg, color: weekGoalDraft.trim() ? '#fff' : c.text, border: 'none', padding: '0.8rem', fontSize: '0.9rem', borderRadius: '12px', cursor: weekGoalDraft.trim() ? 'pointer' : 'not-allowed', width: '100%', marginBottom: 0, fontWeight: 600, opacity: weekGoalDraft.trim() ? 1 : 0.5 }}>
                 ✚ Добавить цель
               </button>
             </div>
@@ -1630,7 +1636,7 @@ export default function App() {
             {/* Список целей */}
             {weekGoals.length > 0 ? (
               weekGoals.map(goal => (
-                <div key={goal.id} style={{ ...S.card(goal.done ? '#1a2a40' : '#1e1e1e'), marginBottom: '0.6rem', border: `1px solid ${goal.done ? '#2a4a6a' : '#2a2a3a'}` }}>
+                <div key={goal.id} style={{ background: goal.done ? (userState.theme === 'light' ? '#eff6ff' : '#1a2a40') : c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.6rem', border: `1px solid ${goal.done ? (userState.theme === 'light' ? c.accent : '#2a4a6a') : c.border}`, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem' }}>
                     <input
                       type="checkbox"
@@ -1639,7 +1645,7 @@ export default function App() {
                       style={{ width: 20, height: 20, cursor: 'pointer', marginTop: 2, flexShrink: 0 }}
                     />
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, fontSize: '0.95rem', textDecoration: goal.done ? 'line-through' : 'none', color: goal.done ? '#666' : '#eee' }}>
+                      <p style={{ margin: 0, fontSize: '0.95rem', textDecoration: goal.done ? 'line-through' : 'none', color: goal.done ? c.textSec : c.text }}>
                         {goal.text}
                       </p>
                     </div>
@@ -1660,11 +1666,10 @@ export default function App() {
           </>
         )}
 
-        <button style={{ ...S.btn('#333'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginTop: '1rem', fontWeight: 600 }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
-
   return null;
 }
 
