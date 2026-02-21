@@ -1009,11 +1009,22 @@ export default function App() {
           const dayData = dailyPlan[day - 1];
           if (!dayData) return null;
 
+          // Логика блокировки дня
+          const prevDay = day - 1;
+          const isPrevDayDone = prevDay === 0 || userState.completedDays.includes(prevDay);
+          const isNewCalendarDay = day === userState.currentDay; // currentDay обновляется каждый реальный день
+          const isLocked = !isPrevDayDone && !isNewCalendarDay && !isDone;
+
           // Динамические цвета для карточек
           let cardBg = c.card;
           let cardBorder = c.border;
+          let cardOpacity = 1;
           
-          if (isDone) {
+          if (isLocked) {
+            cardBg = userState.theme === 'light' ? '#f9f9f9' : '#0a0a0a';
+            cardBorder = userState.theme === 'light' ? '#e5e5ea' : '#1a1a1a';
+            cardOpacity = 0.5;
+          } else if (isDone) {
             cardBg = userState.theme === 'light' ? '#f0fdf4' : '#1a2e1a';
             cardBorder = userState.theme === 'light' ? '#86efac' : '#34c759';
           } else if (isCurrent) {
@@ -1028,21 +1039,24 @@ export default function App() {
               borderRadius: '16px', 
               marginBottom: '0.8rem', 
               border: `1px solid ${cardBorder}`, 
-              cursor: 'pointer',
+              cursor: isLocked ? 'not-allowed' : 'pointer',
               boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.2s ease',
+              opacity: cardOpacity,
+              position: 'relative'
             }}
-              onClick={() => openDay(day)}>
+              onClick={() => !isLocked && openDay(day)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
-                    {isCurrent && <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>Сегодня</span>}
+                    {isLocked && <span style={{ display: 'inline-block', background: `${c.textSec}15`, color: c.textSec, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.textSec}30` }}>🔒 Закрыт</span>}
+                    {isCurrent && !isLocked && <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>Сегодня</span>}
                     {isDone && <span style={{ display: 'inline-block', background: `${c.success}15`, color: c.success, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.success}30` }}>✓ Выполнен</span>}
-                    {!isDone && progress > 0 && <span style={{ display: 'inline-block', background: `${c.warning}15`, color: c.warning, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.warning}30` }}>{progress}/3</span>}
+                    {!isDone && !isLocked && progress > 0 && <span style={{ display: 'inline-block', background: `${c.warning}15`, color: c.warning, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.warning}30` }}>{progress}/3</span>}
                   </div>
                   <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.4 }}>
-                    <span style={{ color: c.accent, fontWeight: 700, marginRight: 6 }}>День {day}.</span>
-                    {dayData.theme}
+                    <span style={{ color: isLocked ? c.textSec : c.accent, fontWeight: 700, marginRight: 6 }}>День {day}.</span>
+                    {isLocked ? 'Завершите предыдущий день' : dayData.theme}
                   </p>
                 </div>
                 <div style={{ color: c.textSec, fontSize: '1.2rem', flexShrink: 0 }}>›</div>
