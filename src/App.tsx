@@ -727,7 +727,7 @@ export default function App() {
           {userState.theme === 'light' ? '🌙' : '☀️'}
         </button>
 
-        <img src="https://ibb.co/HpfY7F2v" alt="Обложка"
+        <img src="https://i.ibb.co/x8tGhCsv/9d734bd7-0156-41e7-bd14-50e80914025e.jpg" alt="Обложка"  
           style={{ maxWidth: '280px', borderRadius: '20px', marginBottom: '1.5rem', boxShadow: userState.theme === 'light' ? '0 8px 24px rgba(0,0,0,0.12)' : '0 8px 24px rgba(0,0,0,0.6)' }} />
         <h1 style={{ fontSize: '2.8rem', color: c.accent, margin: '0 0 0.3rem', fontWeight: 700, letterSpacing: '-0.02em' }}>НеДляВсех</h1>
         <p style={{ fontSize: '1.4rem', margin: '0 0 1.2rem', color: c.textSec, fontWeight: 500 }}>{greeting}</p>
