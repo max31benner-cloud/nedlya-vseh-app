@@ -1172,25 +1172,27 @@ export default function App() {
       <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Журнал записей</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Журнал записей</h1>
         </div>
 
         <textarea value={journalDraft} onChange={e => setJournalDraft(e.target.value)}
           placeholder="Что ты чувствуешь сегодня? Что хочешь изменить?"
-          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
-        <button style={{ ...S.btn(journalDraft.trim() ? 'c.accent' : '#333'), opacity: journalDraft.trim() ? 1 : 0.5 }}
-          disabled={!journalDraft.trim()} onClick={saveFreeEntry}>
+          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }} />
+        <button 
+          style={{ background: journalDraft.trim() ? c.accent : c.buttonSecondaryBg, color: journalDraft.trim() ? '#fff' : c.text, border: journalDraft.trim() ? 'none' : `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: journalDraft.trim() ? 'pointer' : 'not-allowed', width: '100%', marginBottom: '0.75rem', fontWeight: 600, opacity: journalDraft.trim() ? 1 : 0.5, boxShadow: journalDraft.trim() ? '0 2px 8px rgba(0,122,255,0.25)' : 'none' }}
+          disabled={!journalDraft.trim()} 
+          onClick={saveFreeEntry}>
           💾 Сохранить запись
         </button>
 
         {freeEntries.length > 0 && (
           <>
-            <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.5rem' }}>Свободные записи</h2>
+            <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.8rem', fontWeight: 700 }}>Свободные записи</h2>
             {[...freeEntries].reverse().map(e => (
-              <div key={e.id} style={{ ...S.card('#1e1e1e'), position: 'relative' }}>
-                <div style={{ color: c.textSec, fontSize: '0.75rem', marginBottom: 4 }}>{e.date}</div>
-                <p style={{ margin: 0, lineHeight: 1.5 }}>{e.text}</p>
-                <button style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
+              <div key={e.id} style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.8rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)', position: 'relative' }}>
+                <div style={{ color: c.textSec, fontSize: '0.75rem', marginBottom: 6, fontWeight: 500 }}>{e.date}</div>
+                <p style={{ margin: 0, lineHeight: 1.6, color: c.text, fontSize: '0.95rem' }}>{e.text}</p>
+                <button style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
               </div>
             ))}
           </>
@@ -1198,40 +1200,43 @@ export default function App() {
 
         {taskEntries.length > 0 && (
           <>
-            <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.5rem' }}>Записи по заданиям</h2>
+            <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.8rem', fontWeight: 700 }}>Записи по заданиям</h2>
             {[...taskEntries].reverse().map(e => (
-              <div key={e.id} style={{ ...S.card('#1a2040'), position: 'relative' }}>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 4, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <span style={S.tag('c.accent')}>День {e.day}</span>
-                  <span style={S.tag(e.taskIdx === 0 ? '#2d5a9e' : e.taskIdx === 1 ? '#5a3a8a' : '#3a5a3a')}>
+              <div key={e.id} style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.8rem', border: `1px solid ${c.border}`, borderLeft: `3px solid ${c.accent}`, borderLeftColor: c.accent, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)', position: 'relative' }}>
+                <div style={{ display: 'flex', gap: 6, marginBottom: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>День {e.day}</span>
+                  <span style={{ display: 'inline-block', background: e.taskIdx === 0 ? '#007aff15' : e.taskIdx === 1 ? '#a78bfa15' : '#34c75915', color: e.taskIdx === 0 ? c.accent : e.taskIdx === 1 ? '#a78bfa' : c.success, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${e.taskIdx === 0 ? c.accent : e.taskIdx === 1 ? '#a78bfa' : c.success}30` }}>
                     {e.taskIdx === 0 ? '🔵 Практика' : e.taskIdx === 1 ? '👁 Наблюдение' : '✍️ Рефлексия'}
                   </span>
-                  <span style={{ color: c.textSec, fontSize: '0.75rem' }}>{e.date}</span>
+                  <span style={{ color: c.textSec, fontSize: '0.75rem', fontWeight: 500 }}>{e.date}</span>
                 </div>
-                <p style={{ margin: 0, lineHeight: 1.5 }}>{e.text}</p>
-                <button style={{ position: 'absolute', top: 8, right: 10, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
+                <p style={{ margin: 0, lineHeight: 1.6, color: c.text, fontSize: '0.95rem' }}>{e.text}</p>
+                <button style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
               </div>
             ))}
           </>
         )}
 
         {userState.journalEntries.length === 0 && (
-          <p style={{ color: c.textSec, textAlign: 'center', marginTop: '2rem' }}>Пока пусто — начни писать!</p>
+          <div style={{ textAlign: 'center', padding: '3rem 0', color: c.textSec }}>
+            <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>📓</div>
+            <p style={{ margin: 0 }}>Пока пусто — начни писать!</p>
+          </div>
         )}
 
-        <button style={{ ...S.btn('#222'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginTop: '1rem', fontWeight: 600 }} onClick={() => setScreen('home')}>На главную</button>
 
-        <div style={{ marginTop: '2rem', borderTop: '1px solid #1e1e1e', paddingTop: '1.5rem' }}>
+        <div style={{ marginTop: '2rem', borderTop: `1px solid ${c.border}`, paddingTop: '1.5rem' }}>
           {!resetConfirm ? (
-            <button style={{ ...S.btn('#1a1a1a'), color: c.textSec, border: '1px solid #2a2a2a' }} onClick={() => setResetConfirm(true)}>
+            <button style={{ background: c.buttonSecondaryBg, color: c.danger, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.75rem', fontWeight: 600 }} onClick={() => setResetConfirm(true)}>
               🗑 Сбросить весь прогресс
             </button>
           ) : (
-            <div style={{ ...S.card('#2a1010'), border: '1px solid #ff444433', textAlign: 'center' }}>
-              <p style={{ margin: '0 0 1rem', fontSize: '0.95rem', color: '#ff8888' }}>⚠️ Это удалит весь прогресс, записи и результат теста. Действие необратимо.</p>
+            <div style={{ background: userState.theme === 'light' ? '#fff5f5' : '#2a1010', padding: '1rem 1.2rem', borderRadius: '16px', border: `1px solid ${c.danger}33`, textAlign: 'center' }}>
+              <p style={{ margin: '0 0 1rem', fontSize: '0.95rem', color: c.danger, lineHeight: 1.5 }}>⚠️ Это удалит весь прогресс, записи и результат теста. Действие необратимо.</p>
               <div style={{ display: 'flex', gap: '0.75rem' }}>
-                <button style={{ ...S.btn('#ff3333'), marginBottom: 0, flex: 1 }} onClick={resetAll}>Да, сбросить</button>
-                <button style={{ ...S.btn('#333'), marginBottom: 0, flex: 1 }} onClick={() => setResetConfirm(false)}>Отмена</button>
+                <button style={{ background: c.danger, color: '#fff', border: 'none', padding: '0.9rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', marginBottom: 0, flex: 1, fontWeight: 600 }} onClick={resetAll}>Да, сбросить</button>
+                <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '0.9rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', marginBottom: 0, flex: 1, fontWeight: 600 }} onClick={() => setResetConfirm(false)}>Отмена</button>
               </div>
             </div>
           )}
