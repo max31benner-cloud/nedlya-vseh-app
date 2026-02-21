@@ -999,17 +999,17 @@ export default function App() {
       <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('plan')}>←</button>
-          <h2 style={{ margin: 0, fontSize: '1.2rem' }}>День {activeDay}</h2>
+          <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700 }}>День {activeDay}</h2>
         </div>
 
         {/* Тема дня */}
-        <div style={{ ...S.card('#1a2040'), marginBottom: '0.8rem', borderLeft: '3px solid c.accent' }}>
-          <div style={S.tag('c.accent')}>Тема дня</div>
-          <p style={{ margin: '6px 0 0', fontSize: '1.2rem', fontWeight: 700, lineHeight: 1.4 }}>{dayData.theme}</p>
+        <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.8rem', borderLeft: `3px solid ${c.accent}`, border: `1px solid ${c.border}`, borderLeftWidth: '3px', borderLeftColor: c.accent, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+          <div style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', marginBottom: 6, fontWeight: 600, border: `1px solid ${c.accent}30` }}>Тема дня</div>
+          <p style={{ margin: '6px 0 0', fontSize: '1.2rem', fontWeight: 700, lineHeight: 1.4, color: c.text }}>{dayData.theme}</p>
         </div>
 
         {/* Мини-урок */}
-        <div style={{ ...S.card('#141420'), marginBottom: '1.2rem', border: '1px solid #2a2a4a', cursor: 'pointer' }}
+        <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1.2rem', border: `1px solid ${c.border}`, cursor: 'pointer', boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}
           onClick={() => setLessonOpen(o => !o)}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -1029,24 +1029,33 @@ export default function App() {
         {dayData.tasks.map((task, i) => {
           const done = isTaskDone(userState.journalEntries, activeDay, i);
           const entries = userState.journalEntries.filter(e => e.day === activeDay && e.taskIdx === i);
-          const isNewBlocked = false; // ограничения сняты
+          const isNewBlocked = false;
+
+          // Динамические цвета для карточек заданий
+          let taskCardBg = c.card;
+          let taskCardBorder = c.border;
+          
+          if (done) {
+            taskCardBg = userState.theme === 'light' ? '#f0fdf4' : '#1a2e1a';
+            taskCardBorder = userState.theme === 'light' ? '#86efac' : '#2a4a2a';
+          }
 
           return (
-            <div key={i} style={{ ...S.card(done ? '#1a2e1a' : '#1e1e2a'), border: `1px solid ${done ? '#2a4a2a' : '#2a2a3a'}`, marginBottom: '0.8rem' }}>
+            <div key={i} style={{ background: taskCardBg, padding: '1rem 1.2rem', borderRadius: '16px', border: `1px solid ${taskCardBorder}`, marginBottom: '0.8rem', boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', gap: 6, marginBottom: 6, alignItems: 'center' }}>
-                    <span style={S.tag(done ? 'c.success' : i === 0 ? '#2d5a9e' : i === 1 ? '#5a3a8a' : '#3a5a3a')}>
+                    <span style={{ display: 'inline-block', background: done ? `${c.success}15` : (i === 0 ? '#007aff15' : i === 1 ? '#a78bfa15' : '#34c75915'), color: done ? c.success : (i === 0 ? c.accent : i === 1 ? '#a78bfa' : c.success), fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${done ? c.success : (i === 0 ? c.accent : i === 1 ? '#a78bfa' : c.success)}30` }}>
                       {done ? '✓ ' : ''}{taskLabels[i]}
                     </span>
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5, color: done ? '#aaa' : '#eee' }}>{task}</p>
+                  <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.5, color: c.text }}>{task}</p>
                 </div>
               </div>
 
               {/* Записи по этому заданию */}
               {entries.length > 0 && (
-                <div style={{ marginTop: '0.8rem', borderTop: '1px solid #2a2a3a', paddingTop: '0.8rem' }}>
+                <div style={{ marginTop: '0.8rem', borderTop: `1px solid ${c.border}`, paddingTop: '0.8rem' }}>
                   {entries.map(e => (
                     <div key={e.id} style={{ fontSize: '0.88rem', color: c.textSec, marginBottom: 4 }}>
                       <span style={{ color: c.textSec, fontSize: '0.75rem' }}>{e.date} · </span>{e.text}
@@ -1059,7 +1068,21 @@ export default function App() {
               <button
                 disabled={isNewBlocked}
                 onClick={() => { if (!isNewBlocked) openTaskJournal(activeDay, i); }}
-                style={{ ...S.btn(done ? '#2e5c2e' : isNewBlocked ? '#1a1a1a' : '#2d5a9e'), marginTop: '0.8rem', marginBottom: 0, opacity: isNewBlocked ? 0.4 : 1, cursor: isNewBlocked ? 'not-allowed' : 'pointer', fontSize: '0.9rem', padding: '0.6rem 1rem' }}>
+                style={{ 
+                  background: done ? c.success : c.accent, 
+                  color: '#fff', 
+                  border: 'none', 
+                  padding: '0.8rem 1rem', 
+                  fontSize: '0.9rem', 
+                  borderRadius: '12px', 
+                  cursor: isNewBlocked ? 'not-allowed' : 'pointer', 
+                  width: '100%', 
+                  marginTop: '0.8rem', 
+                  marginBottom: 0, 
+                  fontWeight: 600,
+                  opacity: isNewBlocked ? 0.4 : 1,
+                  boxShadow: '0 2px 8px rgba(0,122,255,0.25)'
+                }}>
                 {done ? '📝 Дописать' : isNewBlocked ? '🔒 Завтра' : '✍️ Написать'}
               </button>
             </div>
@@ -1067,18 +1090,18 @@ export default function App() {
         })}
 
         {/* Итоговый прогресс */}
-        <div style={{ ...S.card('#111'), textAlign: 'center', marginTop: '0.5rem' }}>
+        <div style={{ background: c.card, padding: '1rem', borderRadius: '16px', textAlign: 'center', marginTop: '0.5rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
           <div style={{ display: 'flex', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
             {[0, 1, 2].map(i => (
-              <div key={i} style={{ width: 40, height: 6, borderRadius: 3, background: isTaskDone(userState.journalEntries, activeDay, i) ? 'c.success' : '#2a2a2a' }} />
+              <div key={i} style={{ width: 40, height: 6, borderRadius: 3, background: isTaskDone(userState.journalEntries, activeDay, i) ? c.success : (userState.theme === 'light' ? '#e5e5ea' : '#2a2a2a'), transition: 'background 0.2s ease' }} />
             ))}
           </div>
-          <p style={{ margin: 0, fontSize: '0.85rem', color: isDayDone ? 'c.success' : '#666' }}>
+          <p style={{ margin: 0, fontSize: '0.85rem', color: isDayDone ? c.success : c.textSec, fontWeight: 500 }}>
             {isDayDone ? '✓ День полностью выполнен!' : `Выполнено ${dayProgress(userState.journalEntries, activeDay)} из 3 заданий`}
           </p>
         </div>
 
-        <button style={{ ...S.btn('#333'), marginTop: '1rem' }} onClick={() => setScreen('plan')}>← К плану</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginTop: '1rem', fontWeight: 600 }} onClick={() => setScreen('plan')}>← К плану</button>
       </div>
     );
   }
