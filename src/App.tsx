@@ -342,15 +342,29 @@ function getDailyQuote(currentDay: number) {
 
 // ─── Apple Theme ──────────────────────────────────────────────────────────────
 const getColors = (isDark: boolean) => ({
+  // Backgrounds
   bg: isDark ? '#000' : '#f5f5f7',
   card: isDark ? '#1c1c1e' : '#fff',
+  cardSecondary: isDark ? '#2c2c2e' : '#f9f9f9',
+  
+  // Text
   text: isDark ? '#f5f5f7' : '#1d1d1f',
   textSec: isDark ? '#98989d' : '#86868b',
+  
+  // UI Elements
   border: isDark ? '#38383a' : '#d2d2d7',
+  separator: isDark ? '#38383a' : '#c6c6c8',
+  
+  // System Colors
   accent: isDark ? '#0a84ff' : '#007aff',
   success: isDark ? '#30d158' : '#34c759',
   warning: isDark ? '#ff9f0a' : '#ff9500',
   danger: isDark ? '#ff453a' : '#ff3b30',
+  
+  // Special
+  inputBg: isDark ? '#1c1c1e' : '#f9f9f9',
+  buttonSecondaryBg: isDark ? '#2c2c2e' : '#e5e5ea',
+  buttonSecondaryText: isDark ? '#f5f5f7' : '#1d1d1f',
 });
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
@@ -631,7 +645,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', transition: 'background 0.3s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', transition: 'background 0.3s ease', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         {/* Theme toggle */}
         <button
           onClick={() => updateState({ theme: userState.theme === 'light' ? 'dark' : 'light' })}
@@ -683,7 +697,7 @@ export default function App() {
         <div style={{ width: '100%', maxWidth: 400, background: c.card, border: `1px solid ${c.border}`, borderRadius: '16px', padding: '1.2rem', marginBottom: '1.2rem', boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
             <span style={{ fontSize: '0.7rem', color: c.accent, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>💬 День {userState.currentDay}</span>
-            <span style={{ fontSize: '0.65rem', color: c.textSec, background: userState.theme === 'light' ? '#f5f5f7' : '#2c2c2e', padding: '2px 8px', borderRadius: '6px', fontWeight: 500 }}>{dailyQuote.context}</span>
+            <span style={{ fontSize: '0.65rem', color: c.textSec, background: c.inputBg, padding: '2px 8px', borderRadius: '6px', fontWeight: 500 }}>{dailyQuote.context}</span>
           </div>
           <p style={{ margin: 0, fontSize: '0.95rem', color: c.text, lineHeight: 1.6, fontStyle: 'italic' }}>{dailyQuote.text}</p>
         </div>
@@ -691,7 +705,7 @@ export default function App() {
         <div style={{ width: '100%', maxWidth: 400 }}>
           {!userState.testDone
             ? <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)', transition: 'all 0.2s ease' }} onClick={startTest}>Пройти тест</button>
-            : <button style={{ background: userState.theme === 'light' ? '#f5f5f7' : '#2c2c2e', color: c.text, border: `1px solid ${c.border}`, padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', transition: 'all 0.2s ease' }} onClick={startTest}>Пройти тест заново</button>}
+            : <button style={{ background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', transition: 'all 0.2s ease' }} onClick={startTest}>Пройти тест заново</button>}
           
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('plan')}>
             <span>📅 90-дневный план</span>
@@ -731,7 +745,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
     
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ width: '100%', maxWidth: 400, marginBottom: '2rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: c.textSec, marginBottom: 8, fontWeight: 500 }}>
             <span>Вопрос {testStep + 1} из {questions.length}</span><span>{progress}%</span>
@@ -743,8 +757,8 @@ export default function App() {
         <p style={{ fontSize: '1.4rem', maxWidth: 400, textAlign: 'center', margin: '0 0 2rem', lineHeight: 1.5, fontWeight: 600, letterSpacing: '-0.01em' }}>{q.q}</p>
         <div style={{ width: '100%', maxWidth: 400 }}>
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => handleTestAnswer(2)}>Да, часто</button>
-          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(1)}>Иногда</button>
-          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(0)}>Нет, редко</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(1)}>Иногда</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(0)}>Нет, редко</button>
         </div>
         <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', marginTop: '1rem', fontSize: '1rem', fontWeight: 500 }} onClick={() => setScreen('home')}>← Назад</button>
       </div>
@@ -759,7 +773,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
     
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
         <h1 style={{ fontSize: '2rem', marginBottom: '1rem', fontWeight: 700, letterSpacing: '-0.02em' }}>Результат теста</h1>
         <div style={{ fontSize: '4.5rem', fontWeight: 800, color: c.accent, margin: '0.5rem 0', letterSpacing: '-0.03em' }}>{userState.testScore}</div>
         <p style={{ fontSize: '0.9rem', color: c.textSec, marginBottom: '0.5rem', fontWeight: 500 }}>баллов из 24</p>
@@ -767,7 +781,7 @@ export default function App() {
         <div style={{ width: '100%', maxWidth: 400 }}>
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('plan')}>📅 Начать 90-дневный план</button>
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('journal')}>📓 Открыть журнал</button>
-          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('home')}>На главную</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('home')}>На главную</button>
         </div>
       </div>
     );
@@ -782,7 +796,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
         <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{motivationMsg.emoji}</div>
         <div style={{ background: c.card, border: `1px solid ${c.border}`, borderRadius: '20px', padding: '2rem 1.5rem', maxWidth: 360, width: '100%', marginBottom: '1.2rem', boxShadow: userState.theme === 'light' ? '0 4px 16px rgba(0,0,0,0.1)' : '0 4px 16px rgba(0,0,0,0.5)' }}>
           <div style={{ display: 'inline-block', background: `${c.accent}15`, border: `1px solid ${c.accent}40`, borderRadius: '10px', padding: '4px 12px', fontSize: '0.75rem', color: c.accent, fontWeight: 700, marginBottom: '0.8rem', letterSpacing: '0.05em' }}>ДЕНЬ {completedDayNum} ЗАКРЫТ ✓</div>
@@ -822,7 +836,7 @@ export default function App() {
             </div>
           )}
           <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => { setNewAchievements([]); setScreen('plan'); }}>📅 К плану</button>
-          <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
         </div>
       </div>
     );
@@ -838,7 +852,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Ачивки</h1>
@@ -888,7 +902,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>90-дневный план</h1>
@@ -954,7 +968,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('plan')}>←</button>
           <h2 style={{ margin: 0, fontSize: '1.2rem' }}>День {activeDay}</h2>
@@ -1054,7 +1068,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('day-detail')}>←</button>
           <h2 style={{ margin: 0, fontSize: '1.1rem' }}>День {activeDay} · {taskLabels[activeTaskIdx]}</h2>
@@ -1086,7 +1100,7 @@ export default function App() {
           disabled={!canSave} onClick={saveTaskEntry}>
           💾 Сохранить запись
         </button>
-        <button style={{ background: c.card, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('day-detail')}>← Назад</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('day-detail')}>← Назад</button>
         <p style={{ fontSize: '0.8rem', color: c.textSec, textAlign: 'center', marginTop: 4 }}>
           День закроется, когда все 3 задания будут с записями
         </p>
@@ -1104,7 +1118,7 @@ export default function App() {
     const c = getColors(userState.theme === 'dark');
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Журнал записей</h1>
@@ -1112,7 +1126,7 @@ export default function App() {
 
         <textarea value={journalDraft} onChange={e => setJournalDraft(e.target.value)}
           placeholder="Что ты чувствуешь сегодня? Что хочешь изменить?"
-          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.card, color: c.text, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
+          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
         <button style={{ ...S.btn(journalDraft.trim() ? 'c.accent' : '#333'), opacity: journalDraft.trim() ? 1 : 0.5 }}
           disabled={!journalDraft.trim()} onClick={saveFreeEntry}>
           💾 Сохранить запись
@@ -1232,7 +1246,7 @@ export default function App() {
 
 
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Статистика</h1>
@@ -1388,7 +1402,7 @@ export default function App() {
 
     const c = getColors(userState.theme === 'dark');
     return (
-      <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
+      <div style={{ minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
           <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Планирование</h1>
@@ -1607,6 +1621,8 @@ const globalStyle = document.createElement('style');
 globalStyle.textContent = `
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100vw; }
+  body { display: flex; justify-content: center; align-items: flex-start; }
+  #root { max-width: 480px; width: 100%; margin: 0 auto; }
   img { max-width: 100%; }
   textarea { max-width: 100%; }
 `;
