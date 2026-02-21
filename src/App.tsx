@@ -362,8 +362,9 @@ const getColors = (isDark: boolean) => ({
   danger: isDark ? '#ff453a' : '#ff3b30',
   
   // Special
-  inputBg: isDark ? '#1c1c1e' : '#f9f9f9',
-  buttonSecondaryBg: isDark ? '#2c2c2e' : '#e5e5ea',
+  inputBg: isDark ? '#1c1c1e' : '#ffffff',
+  inputBorder: isDark ? '#38383a' : '#d2d2d7',
+  buttonSecondaryBg: isDark ? '#2c2c2e' : '#f9f9f9',
   buttonSecondaryText: isDark ? '#f5f5f7' : '#1d1d1f',
 });
 
@@ -757,8 +758,8 @@ export default function App() {
         <p style={{ fontSize: '1.4rem', maxWidth: 400, textAlign: 'center', margin: '0 0 2rem', lineHeight: 1.5, fontWeight: 600, letterSpacing: '-0.01em' }}>{q.q}</p>
         <div style={{ width: '100%', maxWidth: 400 }}>
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => handleTestAnswer(2)}>Да, часто</button>
-          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(1)}>Иногда</button>
-          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(0)}>Нет, редко</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(1)}>Иногда</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => handleTestAnswer(0)}>Нет, редко</button>
         </div>
         <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', marginTop: '1rem', fontSize: '1rem', fontWeight: 500 }} onClick={() => setScreen('home')}>← Назад</button>
       </div>
@@ -781,7 +782,7 @@ export default function App() {
         <div style={{ width: '100%', maxWidth: 400 }}>
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('plan')}>📅 Начать 90-дневный план</button>
           <button style={{ background: c.accent, color: c.text, border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => setScreen('journal')}>📓 Открыть журнал</button>
-          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('home')}>На главную</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('home')}>На главную</button>
         </div>
       </div>
     );
@@ -836,7 +837,7 @@ export default function App() {
             </div>
           )}
           <button style={{ background: c.accent, color: '#fff', border: 'none', padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', boxShadow: '0 2px 8px rgba(0,122,255,0.25)' }} onClick={() => { setNewAchievements([]); setScreen('plan'); }}>📅 К плану</button>
-          <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
+          <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => { setNewAchievements([]); setScreen('home'); }}>На главную</button>
         </div>
       </div>
     );
@@ -1100,7 +1101,7 @@ export default function App() {
           disabled={!canSave} onClick={saveTaskEntry}>
           💾 Сохранить запись
         </button>
-        <button style={{ background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('day-detail')}>← Назад</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em' }} onClick={() => setScreen('day-detail')}>← Назад</button>
         <p style={{ fontSize: '0.8rem', color: c.textSec, textAlign: 'center', marginTop: 4 }}>
           День закроется, когда все 3 задания будут с записями
         </p>
@@ -1126,7 +1127,7 @@ export default function App() {
 
         <textarea value={journalDraft} onChange={e => setJournalDraft(e.target.value)}
           placeholder="Что ты чувствуешь сегодня? Что хочешь изменить?"
-          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.buttonSecondaryBg, color: c.buttonSecondaryText, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
+          style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
         <button style={{ ...S.btn(journalDraft.trim() ? 'c.accent' : '#333'), opacity: journalDraft.trim() ? 1 : 0.5 }}
           disabled={!journalDraft.trim()} onClick={saveFreeEntry}>
           💾 Сохранить запись
