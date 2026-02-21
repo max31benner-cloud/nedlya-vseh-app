@@ -856,16 +856,16 @@ export default function App() {
       <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>Ачивки</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>Ачивки</h1>
         </div>
 
         {/* Прогресс */}
-        <div style={{ ...S.card('#1a1a2a'), marginBottom: '1.2rem', textAlign: 'center' }}>
-          <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1.1rem' }}>
+        <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1.2rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)', textAlign: 'center' }}>
+          <p style={{ margin: '0 0 8px', fontWeight: 700, fontSize: '1.1rem', color: c.text }}>
             {unlocked.length} <span style={{ color: c.textSec, fontWeight: 400 }}>из</span> {ACHIEVEMENTS.length}
           </p>
-          <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
-            <div style={{ background: 'linear-gradient(90deg,c.accent,#a855f7)', width: `${Math.round((unlocked.length / ACHIEVEMENTS.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.4s', minWidth: unlocked.length > 0 ? 8 : 0 }} />
+          <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 8, height: 8 }}>
+            <div style={{ background: `linear-gradient(90deg, ${c.accent}, #a855f7)`, width: `${Math.round((unlocked.length / ACHIEVEMENTS.length) * 100)}%`, height: 8, borderRadius: 8, transition: 'width 0.4s', minWidth: unlocked.length > 0 ? 8 : 0 }} />
           </div>
         </div>
 
@@ -873,22 +873,31 @@ export default function App() {
         {ACHIEVEMENTS.map(a => {
           const done = unlockedIds.has(a.id);
           return (
-            <div key={a.id} style={{ ...S.card(done ? '#1a1a2a' : '#111'), border: `1px solid ${done ? '#3a2a5a' : '#1a1a1a'}`, opacity: done ? 1 : 0.45 }}>
+            <div key={a.id} style={{ 
+              background: done ? (userState.theme === 'light' ? '#f5f3ff' : '#1a1a2a') : c.card, 
+              padding: '1rem 1.2rem', 
+              borderRadius: '16px', 
+              marginBottom: '0.8rem',
+              border: `1px solid ${done ? (userState.theme === 'light' ? '#a855f7' : '#3a2a5a') : c.border}`, 
+              opacity: done ? 1 : 0.5,
+              boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)',
+              transition: 'all 0.2s ease'
+            }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ fontSize: '2.2rem', filter: done ? 'none' : 'grayscale(1)', flexShrink: 0 }}>{a.emoji}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-                    <span style={{ fontWeight: 700, fontSize: '1rem' }}>{a.title}</span>
-                    {done && <span style={S.tag('c.accent')}>✓</span>}
+                    <span style={{ fontWeight: 700, fontSize: '1rem', color: c.text }}>{a.title}</span>
+                    {done && <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>✓</span>}
                   </div>
-                  <p style={{ margin: 0, fontSize: '0.85rem', color: done ? '#aaa' : '#555' }}>{a.desc}</p>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: c.textSec, lineHeight: 1.4 }}>{a.desc}</p>
                 </div>
               </div>
             </div>
           );
         })}
 
-        <button style={{ ...S.btn('#333'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginTop: '1rem', fontWeight: 600 }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
