@@ -906,18 +906,18 @@ export default function App() {
       <div style={{ maxWidth: '480px', margin: '0 auto', minHeight: '100vh', background: c.bg, color: c.text, padding: '1.5rem', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
           <button style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.2rem', marginRight: 8 }} onClick={() => setScreen('home')}>←</button>
-          <h1 style={{ margin: 0, fontSize: '1.5rem' }}>90-дневный план</h1>
+          <h1 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 700 }}>90-дневный план</h1>
         </div>
 
-        <div style={{ ...S.card('#1a2a1a'), marginBottom: '1.2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span style={{ fontWeight: 700 }}>Прогресс</span>
-            <span style={{ color: 'c.success', fontWeight: 700 }}>{completed} / 90</span>
+        <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '1.2rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+            <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Прогресс</span>
+            <span style={{ color: c.success, fontWeight: 700, fontSize: '0.9rem' }}>{completed} / 90</span>
           </div>
-          <div style={{ background: c.card, borderRadius: 8, height: 8 }}>
-            <div style={{ background: 'c.success', width: `${progressPct}%`, height: 8, borderRadius: 8 }} />
+          <div style={{ background: userState.theme === 'light' ? '#e5e5ea' : '#2c2c2e', borderRadius: 8, height: 6 }}>
+            <div style={{ background: c.success, width: `${progressPct}%`, height: 6, borderRadius: 8, transition: 'width 0.3s ease' }} />
           </div>
-          <p style={{ margin: '0.5rem 0 0', fontSize: '0.85rem', color: c.textSec }}>Текущий день: {userState.currentDay}</p>
+          <p style={{ margin: '0.6rem 0 0', fontSize: '0.8rem', color: c.textSec, fontWeight: 500 }}>Текущий день: {userState.currentDay}</p>
         </div>
 
         {Array.from({ length: 90 }, (_, i) => i + 1).map(day => {
@@ -925,17 +925,38 @@ export default function App() {
           const isCurrent = day === userState.currentDay;
           const progress = dayProgress(userState.journalEntries, day);
           const dayData = dailyPlan[day - 1];
-          if (!dayData) return null; // защита от краша
+          if (!dayData) return null;
+
+          // Динамические цвета для карточек
+          let cardBg = c.card;
+          let cardBorder = c.border;
+          
+          if (isDone) {
+            cardBg = userState.theme === 'light' ? '#f0fdf4' : '#1a2e1a';
+            cardBorder = userState.theme === 'light' ? '#86efac' : '#34c759';
+          } else if (isCurrent) {
+            cardBg = userState.theme === 'light' ? '#eff6ff' : '#1a2040';
+            cardBorder = c.accent;
+          }
 
           return (
-            <div key={day} style={{ ...S.card(isDone ? '#1a2e1a' : isCurrent ? '#1a2040' : '#1a1a1a'), border: isCurrent ? '1px solid c.accent44' : '1px solid transparent', cursor: 'pointer' }}
+            <div key={day} style={{ 
+              background: cardBg, 
+              padding: '1rem 1.2rem', 
+              borderRadius: '16px', 
+              marginBottom: '0.8rem', 
+              border: `1px solid ${cardBorder}`, 
+              cursor: 'pointer',
+              boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)',
+              transition: 'all 0.2s ease'
+            }}
               onClick={() => openDay(day)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 4 }}>
-                    {isCurrent && <span style={S.tag('c.accent')}>Сегодня</span>}
-                    {isDone && <span style={S.tag('c.success')}>✓ Выполнен</span>}
-                    {!isDone && progress > 0 && <span style={S.tag('#ff9800')}>{progress}/3</span>}
+                  <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+                    {isCurrent && <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>Сегодня</span>}
+                    {isDone && <span style={{ display: 'inline-block', background: `${c.success}15`, color: c.success, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.success}30` }}>✓ Выполнен</span>}
+                    {!isDone && progress > 0 && <span style={{ display: 'inline-block', background: `${c.warning}15`, color: c.warning, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.warning}30` }}>{progress}/3</span>}
                   </div>
                   <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.4 }}>
                     <span style={{ color: c.accent, fontWeight: 700, marginRight: 6 }}>День {day}.</span>
@@ -944,16 +965,22 @@ export default function App() {
                 </div>
                 <div style={{ color: c.textSec, fontSize: '1.2rem', flexShrink: 0 }}>›</div>
               </div>
-              <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
+              <div style={{ display: 'flex', gap: 4, marginTop: 10 }}>
                 {[0, 1, 2].map(i => (
-                  <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: isTaskDone(userState.journalEntries, day, i) ? 'c.success' : '#2a2a2a' }} />
+                  <div key={i} style={{ 
+                    flex: 1, 
+                    height: 4, 
+                    borderRadius: 2, 
+                    background: isTaskDone(userState.journalEntries, day, i) ? c.success : (userState.theme === 'light' ? '#e5e5ea' : '#2a2a2a'),
+                    transition: 'background 0.2s ease'
+                  }} />
                 ))}
               </div>
             </div>
           );
         })}
 
-        <button style={{ ...S.btn('#333'), marginTop: '1rem' }} onClick={() => setScreen('home')}>На главную</button>
+        <button style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', width: '100%', marginTop: '1rem', fontWeight: 600 }} onClick={() => setScreen('home')}>На главную</button>
       </div>
     );
   }
