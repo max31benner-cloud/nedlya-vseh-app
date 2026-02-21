@@ -432,21 +432,68 @@ interface Achievement {
 }
 
 const ACHIEVEMENTS: Achievement[] = [
+  // Базовые ачивки по дням
   { id: 'first_step',   emoji: '👣', title: 'Первый шаг',       desc: 'Выполнить первый день',                  check: s => s.completedDays.length >= 1 },
-  { id: 'streak_3',     emoji: '🔥', title: 'Три дня подряд',   desc: 'Не пропустить 3 дня подряд',             check: s => s.maxStreak >= 3 },
   { id: 'week_done',    emoji: '📅', title: 'Неделя',           desc: 'Выполнить 7 дней плана',                 check: s => s.completedDays.length >= 7 },
-  { id: 'streak_7',     emoji: '⚡', title: 'Огонь недели',      desc: '7 дней подряд без пропуска',             check: s => s.maxStreak >= 7 },
   { id: 'two_weeks',    emoji: '🌱', title: 'Росток',           desc: 'Выполнить 14 дней плана',                check: s => s.completedDays.length >= 14 },
   { id: 'month_done',   emoji: '🌙', title: 'Первый месяц',     desc: 'Выполнить 30 дней плана',                check: s => s.completedDays.length >= 30 },
-  { id: 'streak_14',    emoji: '💪', title: 'Две недели огня',   desc: '14 дней подряд без пропуска',            check: s => s.maxStreak >= 14 },
   { id: 'halfway',      emoji: '🎯', title: 'Половина пути',    desc: 'Выполнить 45 дней плана',                check: s => s.completedDays.length >= 45 },
   { id: 'two_months',   emoji: '🦋', title: 'Два месяца',       desc: 'Выполнить 60 дней плана',                check: s => s.completedDays.length >= 60 },
-  { id: 'streak_30',    emoji: '🌊', title: 'Месяц без пропусков', desc: '30 дней подряд',                     check: s => s.maxStreak >= 30 },
-  { id: 'journal_10',   emoji: '📓', title: 'Летописец',        desc: 'Сделать 10 записей в журнале',           check: s => s.journalEntries.length >= 10 },
-  { id: 'journal_50',   emoji: '📖', title: 'Хроникёр',         desc: 'Сделать 50 записей в журнале',           check: s => s.journalEntries.length >= 50 },
-  { id: 'test_done',    emoji: '🧭', title: 'Честный взгляд',   desc: 'Пройти тест осознанности',               check: s => s.testDone },
   { id: 'day_75',       emoji: '🏔️', title: 'Почти вершина',    desc: 'Выполнить 75 дней плана',                check: s => s.completedDays.length >= 75 },
   { id: 'finished',     emoji: '🏆', title: 'Завершение',       desc: 'Пройти все 90 дней',                     check: s => s.completedDays.length >= 90 },
+  
+  // Стрики
+  { id: 'streak_3',     emoji: '🔥', title: 'Три дня подряд',   desc: 'Не пропустить 3 дня подряд',             check: s => s.maxStreak >= 3 },
+  { id: 'streak_7',     emoji: '⚡', title: 'Огонь недели',      desc: '7 дней подряд без пропуска',             check: s => s.maxStreak >= 7 },
+  { id: 'streak_14',    emoji: '💪', title: 'Две недели огня',   desc: '14 дней подряд без пропуска',            check: s => s.maxStreak >= 14 },
+  { id: 'streak_30',    emoji: '🌊', title: 'Месяц без пропусков', desc: '30 дней подряд',                     check: s => s.maxStreak >= 30 },
+  { id: 'streak_60',    emoji: '🔱', title: 'Несломленный',     desc: '60 дней подряд без пропуска',            check: s => s.maxStreak >= 60 },
+  { id: 'streak_90',    emoji: '👑', title: 'Железная воля',    desc: 'Все 90 дней без единого пропуска',       check: s => s.maxStreak >= 90 },
+  
+  // Записи и слова
+  { id: 'journal_10',   emoji: '📓', title: 'Летописец',        desc: 'Сделать 10 записей в журнале',           check: s => s.journalEntries.length >= 10 },
+  { id: 'journal_50',   emoji: '📖', title: 'Хроникёр',         desc: 'Сделать 50 записей в журнале',           check: s => s.journalEntries.length >= 50 },
+  { id: 'journal_100',  emoji: '📚', title: 'Архивариус',       desc: 'Сделать 100 записей в журнале',          check: s => s.journalEntries.length >= 100 },
+  { id: 'words_1k',     emoji: '✍️', title: 'Первая тысяча',    desc: 'Написать 1 000 слов',                    check: s => s.journalEntries.reduce((acc, e) => acc + e.text.split(/\s+/).filter(Boolean).length, 0) >= 1000 },
+  { id: 'words_10k',    emoji: '📝', title: 'Десять тысяч',     desc: 'Написать 10 000 слов',                   check: s => s.journalEntries.reduce((acc, e) => acc + e.text.split(/\s+/).filter(Boolean).length, 0) >= 10000 },
+  { id: 'words_50k',    emoji: '🖋️', title: 'Писатель',         desc: 'Написать 50 000 слов',                   check: s => s.journalEntries.reduce((acc, e) => acc + e.text.split(/\s+/).filter(Boolean).length, 0) >= 50000 },
+  { id: 'words_100k',   emoji: '📜', title: 'Мастер слова',     desc: 'Написать 100 000 слов',                  check: s => s.journalEntries.reduce((acc, e) => acc + e.text.split(/\s+/).filter(Boolean).length, 0) >= 100000 },
+  
+  // Разнообразие и глубина
+  { id: 'all_types',    emoji: '🎨', title: 'Разносторонний',   desc: 'Использовать все 3 типа задач',          check: s => {
+    const taskEntries = s.journalEntries.filter(e => e.day !== undefined);
+    const hasType0 = taskEntries.some(e => e.taskIdx === 0);
+    const hasType1 = taskEntries.some(e => e.taskIdx === 1);
+    const hasType2 = taskEntries.some(e => e.taskIdx === 2);
+    return hasType0 && hasType1 && hasType2;
+  }},
+  { id: 'deep_dive',    emoji: '🌊', title: 'Глубокое погружение', desc: 'Написать запись длиннее 500 слов',   check: s => s.journalEntries.some(e => e.text.split(/\s+/).filter(Boolean).length >= 500) },
+  { id: 'consistent',   emoji: '⏰', title: 'Дисциплина',        desc: 'Записать 5 дней подряд в одно время',    check: s => {
+    const taskEntries = s.journalEntries.filter(e => e.day !== undefined).slice(-10);
+    if (taskEntries.length < 5) return false;
+    
+    const times = taskEntries.map(e => {
+      const parts = e.date.split(', ');
+      if (parts.length < 2) return null;
+      const timePart = parts[1];
+      if (!timePart) return null;
+      const [hours] = timePart.split(':');
+      return parseInt(hours || '0', 10);
+    }).filter(h => h !== null);
+    
+    if (times.length < 5) return false;
+    
+    // Проверяем последние 5 записей на ±1 час
+    const recent5 = times.slice(-5);
+    const baseHour = recent5[0];
+    return recent5.every(h => Math.abs(h - baseHour) <= 1);
+  }},
+  
+  // Специальные
+  { id: 'test_done',    emoji: '🧭', title: 'Честный взгляд',   desc: 'Пройти тест осознанности',               check: s => s.testDone },
+  { id: 'free_spirit',  emoji: '🕊️', title: 'Свободный дух',    desc: 'Сделать 20 свободных записей',           check: s => s.journalEntries.filter(e => e.day === undefined).length >= 20 },
+  { id: 'planner_pro',  emoji: '📋', title: 'Планировщик',      desc: 'Создать 30 задач в планере',             check: s => s.dailyTasks.length + s.weeklyGoals.length >= 30 },
+  { id: 'completionist', emoji: '✨', title: 'Перфекционист',   desc: 'Выполнить 50 задач в планере',           check: s => s.dailyTasks.filter(t => t.done).length + s.weeklyGoals.filter(g => g.done).length >= 50 },
 ];
 
 function getUnlockedAchievements(state: UserState): Achievement[] {
@@ -482,6 +529,7 @@ export default function App() {
   const [completedDayNum, setCompletedDayNum] = useState(1);
 
   const [journalDraft, setJournalDraft] = useState('');
+  const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
   const [lessonOpen, setLessonOpen] = useState(false);
@@ -618,6 +666,31 @@ export default function App() {
   function deleteEntry(id: string) {
     updateState({ journalEntries: userState.journalEntries.filter(e => e.id !== id) });
   }
+  
+  function startEditEntry(id: string) {
+    const entry = userState.journalEntries.find(e => e.id === id);
+    if (entry) {
+      setJournalDraft(entry.text);
+      setEditingEntryId(id);
+    }
+  }
+  
+  function saveEditedEntry() {
+    if (!journalDraft.trim() || !editingEntryId) return;
+    updateState({
+      journalEntries: userState.journalEntries.map(e => 
+        e.id === editingEntryId ? { ...e, text: journalDraft.trim() } : e
+      )
+    });
+    setJournalDraft('');
+    setEditingEntryId(null);
+  }
+  
+  function cancelEdit() {
+    setJournalDraft('');
+    setEditingEntryId(null);
+  }
+  
   function resetAll() {
     const fresh = { ...DEFAULT_STATE };
     saveState(userId, fresh);
@@ -1187,12 +1260,29 @@ export default function App() {
         <textarea value={journalDraft} onChange={e => setJournalDraft(e.target.value)}
           placeholder="Что ты чувствуешь сегодня? Что хочешь изменить?"
           style={{ width: '100%', minHeight: '110px', padding: '1rem', background: c.inputBg, color: c.text, border: `1px solid ${c.border}`, borderRadius: '14px', marginBottom: '0.8rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }} />
-        <button 
-          style={{ background: journalDraft.trim() ? c.accent : c.buttonSecondaryBg, color: journalDraft.trim() ? '#fff' : c.text, border: journalDraft.trim() ? 'none' : `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: journalDraft.trim() ? 'pointer' : 'not-allowed', width: '100%', marginBottom: '0.75rem', fontWeight: 600, opacity: journalDraft.trim() ? 1 : 0.5, boxShadow: journalDraft.trim() ? '0 2px 8px rgba(0,122,255,0.25)' : 'none' }}
-          disabled={!journalDraft.trim()} 
-          onClick={saveFreeEntry}>
-          💾 Сохранить запись
-        </button>
+        
+        {editingEntryId ? (
+          <div style={{ display: 'flex', gap: '0.7rem', marginBottom: '0.75rem' }}>
+            <button 
+              style={{ background: journalDraft.trim() ? c.accent : c.buttonSecondaryBg, color: journalDraft.trim() ? '#fff' : c.text, border: journalDraft.trim() ? 'none' : `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: journalDraft.trim() ? 'pointer' : 'not-allowed', flex: 1, fontWeight: 600, opacity: journalDraft.trim() ? 1 : 0.5, boxShadow: journalDraft.trim() ? '0 2px 8px rgba(0,122,255,0.25)' : 'none' }}
+              disabled={!journalDraft.trim()} 
+              onClick={saveEditedEntry}>
+              ✅ Сохранить изменения
+            </button>
+            <button 
+              style={{ background: c.buttonSecondaryBg, color: c.text, border: `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: 'pointer', flex: 1, fontWeight: 600 }}
+              onClick={cancelEdit}>
+              ✕ Отмена
+            </button>
+          </div>
+        ) : (
+          <button 
+            style={{ background: journalDraft.trim() ? c.accent : c.buttonSecondaryBg, color: journalDraft.trim() ? '#fff' : c.text, border: journalDraft.trim() ? 'none' : `1px solid ${c.border}`, padding: '1rem', fontSize: '1rem', borderRadius: '12px', cursor: journalDraft.trim() ? 'pointer' : 'not-allowed', width: '100%', marginBottom: '0.75rem', fontWeight: 600, opacity: journalDraft.trim() ? 1 : 0.5, boxShadow: journalDraft.trim() ? '0 2px 8px rgba(0,122,255,0.25)' : 'none' }}
+            disabled={!journalDraft.trim()} 
+            onClick={saveFreeEntry}>
+            💾 Сохранить запись
+          </button>
+        )}
 
         {freeEntries.length > 0 && (
           <>
@@ -1200,8 +1290,21 @@ export default function App() {
             {[...freeEntries].reverse().map(e => (
               <div key={e.id} style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.8rem', border: `1px solid ${c.border}`, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)', position: 'relative' }}>
                 <div style={{ color: c.textSec, fontSize: '0.75rem', marginBottom: 6, fontWeight: 500 }}>{e.date}</div>
-                <p style={{ margin: 0, lineHeight: 1.6, color: c.text, fontSize: '0.95rem' }}>{e.text}</p>
-                <button style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
+                <p style={{ margin: '0 0 0.8rem', lineHeight: 1.6, color: c.text, fontSize: '0.95rem', paddingRight: '4rem' }}>{e.text}</p>
+                <div style={{ display: 'flex', gap: '0.5rem', position: 'absolute', top: 10, right: 12 }}>
+                  <button 
+                    style={{ background: 'none', border: 'none', color: c.accent, cursor: 'pointer', fontSize: '1rem', padding: '0.3rem' }} 
+                    onClick={() => startEditEntry(e.id)}
+                    title="Редактировать">
+                    ✏️
+                  </button>
+                  <button 
+                    style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.1rem', padding: '0.3rem' }} 
+                    onClick={() => deleteEntry(e.id)}
+                    title="Удалить">
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </>
@@ -1211,7 +1314,7 @@ export default function App() {
           <>
             <h2 style={{ fontSize: '1.1rem', color: c.textSec, margin: '1.5rem 0 0.8rem', fontWeight: 700 }}>Записи по заданиям</h2>
             {[...taskEntries].reverse().map(e => (
-              <div key={e.id} style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '16px', marginBottom: '0.8rem', border: `1px solid ${c.border}`, borderLeft: `3px solid ${c.accent}`, borderLeftColor: c.accent, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)', position: 'relative' }}>
+              <div key={e.id} style={{ background: c.card, padding: '1rem 1.2rem 1rem 1.2rem', borderRadius: '16px', marginBottom: '0.8rem', border: `1px solid ${c.border}`, borderLeft: `3px solid ${c.accent}`, borderLeftColor: c.accent, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)', position: 'relative' }}>
                 <div style={{ display: 'flex', gap: 6, marginBottom: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                   <span style={{ display: 'inline-block', background: `${c.accent}15`, color: c.accent, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${c.accent}30` }}>День {e.day}</span>
                   <span style={{ display: 'inline-block', background: e.taskIdx === 0 ? '#007aff15' : e.taskIdx === 1 ? '#a78bfa15' : '#34c75915', color: e.taskIdx === 0 ? c.accent : e.taskIdx === 1 ? '#a78bfa' : c.success, fontSize: '0.7rem', padding: '3px 8px', borderRadius: '6px', fontWeight: 600, border: `1px solid ${e.taskIdx === 0 ? c.accent : e.taskIdx === 1 ? '#a78bfa' : c.success}30` }}>
@@ -1219,8 +1322,21 @@ export default function App() {
                   </span>
                   <span style={{ color: c.textSec, fontSize: '0.75rem', fontWeight: 500 }}>{e.date}</span>
                 </div>
-                <p style={{ margin: 0, lineHeight: 1.6, color: c.text, fontSize: '0.95rem' }}>{e.text}</p>
-                <button style={{ position: 'absolute', top: 10, right: 12, background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.1rem' }} onClick={() => deleteEntry(e.id)}>✕</button>
+                <p style={{ margin: '0 0 0.8rem', lineHeight: 1.6, color: c.text, fontSize: '0.95rem', paddingRight: '4rem' }}>{e.text}</p>
+                <div style={{ display: 'flex', gap: '0.5rem', position: 'absolute', top: 10, right: 12 }}>
+                  <button 
+                    style={{ background: 'none', border: 'none', color: c.accent, cursor: 'pointer', fontSize: '1rem', padding: '0.3rem' }} 
+                    onClick={() => startEditEntry(e.id)}
+                    title="Редактировать">
+                    ✏️
+                  </button>
+                  <button 
+                    style={{ background: 'none', border: 'none', color: c.textSec, cursor: 'pointer', fontSize: '1.1rem', padding: '0.3rem' }} 
+                    onClick={() => deleteEntry(e.id)}
+                    title="Удалить">
+                    ✕
+                  </button>
+                </div>
               </div>
             ))}
           </>
