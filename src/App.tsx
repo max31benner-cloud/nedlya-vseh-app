@@ -368,59 +368,6 @@ const getColors = (isDark: boolean) => ({
   buttonSecondaryText: isDark ? '#f5f5f7' : '#1d1d1f',
 });
 
-// ─── Styles ───────────────────────────────────────────────────────────────────
-const S = {
-  page: {
-    minHeight: '100vh',
-    background: '#0f0f0f',
-    color: '#fff',
-    padding: '1.5rem',
-    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    boxSizing: 'border-box' as const,
-    width: '100%',
-    overflowX: 'hidden' as const,
-    wordBreak: 'break-word' as const,
-  } as React.CSSProperties,
-  centered: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btn: (color = '#333') => ({
-    background: color,
-    color: '#fff',
-    border: 'none',
-    padding: '0.9rem 1.2rem',
-    fontSize: '1.05rem',
-    borderRadius: '14px',
-    cursor: 'pointer',
-    width: '100%',
-    marginBottom: '0.75rem',
-    fontWeight: 600,
-    letterSpacing: '0.01em',
-  } as React.CSSProperties),
-  card: (bg = '#1a1a1a') => ({
-    background: bg,
-    padding: '1rem 1.2rem',
-    borderRadius: '14px',
-    marginBottom: '0.8rem',
-    boxSizing: 'border-box' as const,
-    width: '100%',
-    wordBreak: 'break-word' as const,
-    overflowWrap: 'break-word' as const,
-  } as React.CSSProperties),
-  tag: (color: string) => ({
-    display: 'inline-block',
-    background: color,
-    color: '#fff',
-    fontSize: '0.75rem',
-    padding: '2px 8px',
-    borderRadius: '8px',
-    marginBottom: '6px',
-    fontWeight: 700,
-  } as React.CSSProperties),
-};
 
 // ─── Ачивки ───────────────────────────────────────────────────────────────────
 interface Achievement {
@@ -1221,16 +1168,16 @@ export default function App() {
           <h2 style={{ margin: 0, fontSize: '1.1rem' }}>День {activeDay} · {taskLabels[activeTaskIdx]}</h2>
         </div>
 
-        <div style={{ ...S.card('#1a2040'), marginBottom: '1.2rem', borderLeft: '3px solid c.accent' }}>
-          <div style={S.tag('c.accent')}>{taskLabels[activeTaskIdx]}</div>
-          <p style={{ margin: '6px 0 0', fontSize: '1rem', lineHeight: 1.5 }}>{taskText}</p>
+        <div style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '14px', marginBottom: '1.2rem', border: `1px solid ${c.border}`, borderLeft: `3px solid ${c.accent}`, boxShadow: userState.theme === 'light' ? '0 2px 8px rgba(0,0,0,0.08)' : '0 2px 8px rgba(0,0,0,0.4)' }}>
+          <div style={{ display: 'inline-block', background: `${c.accent}20`, color: c.accent, fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', marginBottom: 6, fontWeight: 700, border: `1px solid ${c.accent}40` }}>{taskLabels[activeTaskIdx]}</div>
+          <p style={{ margin: '6px 0 0', fontSize: '1rem', lineHeight: 1.5, color: c.text }}>{taskText}</p>
         </div>
 
         {prevEntries.length > 0 && (
           <div style={{ marginBottom: '1rem' }}>
             <p style={{ color: c.textSec, fontSize: '0.85rem', margin: '0 0 8px' }}>Предыдущие записи:</p>
             {prevEntries.map(e => (
-              <div key={e.id} style={{ ...S.card('#1e1e1e'), fontSize: '0.9rem' }}>
+              <div key={e.id} style={{ background: c.card, padding: '1rem 1.2rem', borderRadius: '14px', marginBottom: '0.6rem', border: `1px solid ${c.border}`, fontSize: '0.9rem', color: c.text, boxShadow: userState.theme === 'light' ? '0 1px 4px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.3)' }}>
                 <div style={{ color: c.textSec, fontSize: '0.75rem', marginBottom: 4 }}>{e.date}</div>
                 {e.text}
               </div>
@@ -1241,9 +1188,9 @@ export default function App() {
         <p style={{ color: c.textSec, fontSize: '0.95rem', margin: '0 0 8px' }}>Опиши честно — что произошло, что почувствовал?</p>
         <textarea value={taskDraft} onChange={e => setTaskDraft(e.target.value)}
           placeholder="Пиши честно — это только для тебя..."
-          style={{ width: '100%', minHeight: '140px', padding: '1rem', background: c.inputBg, color: c.text, border: `1px solid ${canSave ? 'c.accent55' : '#333'}`, borderRadius: '14px', marginBottom: '1rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box' }} />
+          style={{ width: '100%', minHeight: '140px', padding: '1rem', background: c.inputBg, color: c.text, border: `1px solid ${canSave ? c.accent : c.border}`, borderRadius: '14px', marginBottom: '1rem', fontSize: '1rem', lineHeight: 1.5, resize: 'vertical', boxSizing: 'border-box', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif' }} />
 
-        <button style={{ ...S.btn(canSave ? 'c.success' : '#333'), opacity: canSave ? 1 : 0.5, cursor: canSave ? 'pointer' : 'not-allowed' }}
+        <button style={{ background: canSave ? c.success : c.buttonSecondaryBg, color: canSave ? '#fff' : c.text, border: canSave ? 'none' : `1px solid ${c.border}`, padding: '0.95rem', fontSize: '1rem', borderRadius: '12px', cursor: canSave ? 'pointer' : 'not-allowed', width: '100%', marginBottom: '0.7rem', fontWeight: 600, letterSpacing: '-0.01em', opacity: canSave ? 1 : 0.5, boxShadow: canSave ? '0 2px 8px rgba(52,199,89,0.25)' : 'none' }}
           disabled={!canSave} onClick={saveTaskEntry}>
           💾 Сохранить запись
         </button>
