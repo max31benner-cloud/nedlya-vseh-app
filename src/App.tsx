@@ -30,6 +30,7 @@ interface UserState {
   testScore: number;
   currentDay: number;
   completedDays: number[];
+  completedDates: Record<number, string>;
   journalEntries: JournalEntry[];
   lastCompletedDate: string | null;
   currentStreak: number;
@@ -44,6 +45,7 @@ const DEFAULT_STATE: UserState = {
   testScore: 0,
   currentDay: 1,
   completedDays: [],
+  completedDates: {},
   journalEntries: [],
   lastCompletedDate: null,
   currentStreak: 0,
@@ -559,6 +561,10 @@ export default function App() {
       ? [...userState.completedDays, activeDay]
       : userState.completedDays;
 
+    const newCompletedDates = dayNowComplete && !wasAlreadyComplete
+      ? { ...userState.completedDates, [activeDay]: getTodayString() }
+      : userState.completedDates;
+
     const nextDay = dayNowComplete && !wasAlreadyComplete && activeDay >= userState.currentDay
       ? Math.min(90, activeDay + 1)
       : userState.currentDay;
@@ -571,6 +577,7 @@ export default function App() {
     updateState({
       journalEntries: newEntries,
       completedDays: newCompleted,
+      completedDates: newCompletedDates,
       currentDay: nextDay,
       lastCompletedDate: dayNowComplete && !wasAlreadyComplete ? getTodayString() : userState.lastCompletedDate,
       currentStreak: newStreak,
@@ -584,6 +591,7 @@ export default function App() {
       ...userState,
       journalEntries: newEntries,
       completedDays: newCompleted,
+      completedDates: newCompletedDates,
       currentDay: nextDay,
       lastCompletedDate: dayNowComplete && !wasAlreadyComplete ? getTodayString() : userState.lastCompletedDate,
       currentStreak: newStreak,
@@ -959,8 +967,8 @@ export default function App() {
           // Логика блокировки дня
           const prevDay = day - 1;
           const isPrevDayDone = prevDay === 0 || userState.completedDays.includes(prevDay);
-          const isNewCalendarDay = day === userState.currentDay; // currentDay обновляется каждый реальный день
-          const isLocked = !isPrevDayDone && !isNewCalendarDay && !isDone;
+          const prevCompletedBeforeToday = prevDay === 0 || (userState.completedDates[prevDay] ?? '') < getTodayString();
+          const isLocked = !isDone && (!isPrevDayDone || !prevCompletedBeforeToday);
 
           // Динамические цвета для карточек
           let cardBg = c.card;
